@@ -1,4 +1,3 @@
-import NewsAPI from 'newsapi';
 import { cache } from 'react';
 
 import { serverEnv } from '@/lib/env.server';
@@ -14,12 +13,14 @@ interface NewsAPIArticle {
   url?: string | null;
   publishedAt?: string | null;
   source?: {
+    id?: string | null;
     name?: string | null;
   } | null;
 }
 
 interface NewsAPIResponse {
   status: string;
+  totalResults?: number;
   articles?: NewsAPIArticle[];
 }
 
@@ -76,10 +77,6 @@ const keywordRules: KeywordRule[] = [
 ];
 
 const hasNewsApiKey = Boolean(process.env.NEWSAPI_KEY);
-const newsApiClient =
-  hasNewsApiKey && serverEnv.NEWSAPI_KEY
-    ? new NewsAPI(serverEnv.NEWSAPI_KEY)
-    : null;
 
 const matchRule = (content: string) => {
   const lower = content.toLowerCase();
@@ -89,22 +86,34 @@ const matchRule = (content: string) => {
 };
 
 export const fetchNewsEvents = cache(async (): Promise<CurrentEvent[]> => {
-  if (!newsApiClient) {
+  if (!hasNewsApiKey || !serverEnv.NEWSAPI_KEY) {
     return [];
   }
 
   try {
-    const response = (await newsApiClient.v2.topHeadlines({
-      language: 'en',
-      country: 'us',
-      pageSize: 5,
-    })) as unknown as NewsAPIResponse;
+    const apiKey = serverEnv.NEWSAPI_KEY;
+    const url = `https://newsapi.org/v2/top-headlines?country=us&language=en&pageSize=5&apiKey=${apiKey}`;
 
-    if (response.status !== 'ok' || !response.articles?.length) {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `NewsAPI returned ${response.status}: ${response.statusText}`
+      );
+    }
+
+    const data = (await response.json()) as NewsAPIResponse;
+
+    if (data.status !== 'ok' || !data.articles?.length) {
       return [];
     }
 
-    return response.articles
+    return data.articles
       .filter((article: NewsAPIArticle) => Boolean(article.title))
       .map((article: NewsAPIArticle, index: number) => {
         const summary = article.description ?? article.content ?? '';
