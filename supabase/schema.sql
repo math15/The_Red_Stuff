@@ -24,7 +24,7 @@ create table if not exists public.opportunities (
   organization_type text not null check (organization_type in ('charity', 'church', 'community', 'environmental', 'healthcare', 'education', 'other')),
   opportunity_title text not null,
   description text not null,
-  time_commitment text not null check (time_commitment in ('one-time', 'weekly', 'monthly', 'ongoing')),
+  time_commitment text not null check (time_commitment in ('one-time', 'weekly', 'monthly', 'ongoing', 'on-call')),
   location jsonb not null default '{}'::jsonb,
   skills_needed text[] not null default '{}',
   cause_categories text[] not null default '{}',
