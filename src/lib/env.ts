@@ -6,15 +6,17 @@
  */
 import { z } from 'zod';
 
-const envVariables = z.object({
+const clientEnvSchema = z.object({
   NEXT_PUBLIC_SHOW_LOGGER: z.enum(['true', 'false']).optional(),
+  NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
 });
 
-envVariables.parse(process.env);
+export const clientEnv = clientEnvSchema.parse(process.env);
 
 declare global {
   namespace NodeJS {
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
-    interface ProcessEnv extends z.infer<typeof envVariables> {}
+    interface ProcessEnv extends z.infer<typeof clientEnvSchema> {}
   }
 }

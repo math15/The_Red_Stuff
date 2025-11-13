@@ -62,6 +62,10 @@
 }
 
 @layer base {
+  body {
+    @apply bg-[#fff9f3] text-neutral-900 antialiased;
+  }
+
   /* inter var - latin */
   @font-face {
     font-family: 'Inter';

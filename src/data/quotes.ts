@@ -1,0 +1,112 @@
+import { Quote } from '@/types';
+
+export const quotes: Quote[] = [
+  {
+    id: 'quote-matthew-25-40',
+    text: 'Truly I tell you, whatever you did for one of the least of these brothers and sisters of mine, you did for me.',
+    reference: 'Matthew 25:40',
+    theme: 'hunger',
+    context:
+      'Jesus teaches that caring for the vulnerable is caring for Him directly.',
+    tags: ['compassion', 'service', 'justice'],
+  },
+  {
+    id: 'quote-matthew-7-16',
+    text: 'By their fruits you will know them.',
+    reference: 'Matthew 7:16',
+    theme: 'community',
+    context: 'Discipleship is verified by tangible acts of mercy and justice.',
+    tags: ['action', 'character', 'witness'],
+  },
+  {
+    id: 'quote-matthew-5-9',
+    text: 'Blessed are the peacemakers, for they will be called children of God.',
+    reference: 'Matthew 5:9',
+    theme: 'peace',
+    context:
+      'The Sermon on the Mount invites active peacemaking, not passive avoidance.',
+    tags: ['peace', 'justice', 'reconciliation'],
+  },
+  {
+    id: 'quote-matthew-5-14',
+    text: 'You are the light of the world. A town built on a hill cannot be hidden... let your light shine before others.',
+    reference: 'Matthew 5:14-16',
+    theme: 'community',
+    context: 'Jesus calls His followers to live visibly transformative lives.',
+    tags: ['witness', 'community', 'action'],
+  },
+  {
+    id: 'quote-matthew-19-14',
+    text: 'Let the little children come to me... for the kingdom of heaven belongs to such as these.',
+    reference: 'Matthew 19:14',
+    theme: 'children',
+    context: 'Christ elevates the value and dignity of children and youth.',
+    tags: ['education', 'youth', 'care'],
+  },
+  {
+    id: 'quote-matthew-5-7',
+    text: 'Blessed are the merciful, for they will be shown mercy.',
+    reference: 'Matthew 5:7',
+    theme: 'mercy',
+    context:
+      'Mercy is reciprocal—God expects the forgiven to extend forgiveness.',
+    tags: ['mercy', 'compassion', 'prison'],
+  },
+  {
+    id: 'quote-matthew-5-4',
+    text: 'Blessed are those who mourn, for they will be comforted.',
+    reference: 'Matthew 5:4',
+    theme: 'hope',
+    context: 'Jesus promises presence and comfort amid grief and loss.',
+    tags: ['hope', 'grief', 'care'],
+  },
+  {
+    id: 'quote-luke-4-18',
+    text: 'The Spirit of the Lord is on me... He has sent me to proclaim freedom for the prisoners and recovery of sight for the blind.',
+    reference: 'Luke 4:18',
+    theme: 'justice',
+    context:
+      'Jesus frames His ministry around liberation for the marginalized.',
+    tags: ['justice', 'prison', 'freedom'],
+  },
+  {
+    id: 'quote-matthew-28-19',
+    text: 'Go and make disciples of all nations... teaching them to obey everything I have commanded you.',
+    reference: 'Matthew 28:19-20',
+    theme: 'faith',
+    context: 'The Great Commission ties learning to living.',
+    tags: ['faith', 'mission', 'teaching'],
+  },
+  {
+    id: 'quote-luke-10-9',
+    text: 'Heal the sick who are there and tell them, “The kingdom of God has come near to you.”',
+    reference: 'Luke 10:9',
+    theme: 'healthcare',
+    context: 'The disciples tie tangible healing to spiritual hope.',
+    tags: ['healing', 'healthcare', 'hope'],
+  },
+  {
+    id: 'quote-matthew-5-6',
+    text: 'Blessed are those who hunger and thirst for righteousness, for they will be filled.',
+    reference: 'Matthew 5:6',
+    theme: 'justice',
+    context: 'Jesus links justice-seeking with God’s satisfaction.',
+    tags: ['justice', 'advocacy', 'equity'],
+  },
+  {
+    id: 'quote-matthew-9-37',
+    text: 'The harvest is plentiful but the workers are few.',
+    reference: 'Matthew 9:37',
+    theme: 'community',
+    context: 'Opportunity abounds, but laborers must step forward.',
+    tags: ['service', 'calling', 'mission'],
+  },
+  {
+    id: 'quote-john-13-34',
+    text: 'Love one another. As I have loved you, so you must love one another.',
+    reference: 'John 13:34',
+    theme: 'family',
+    context: 'Jesus roots action in self-giving love.',
+    tags: ['love', 'community', 'care'],
+  },
+];
