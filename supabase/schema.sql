@@ -4,7 +4,7 @@ create extension if not exists "vector";
 
 -- Quotes table
 create table if not exists public.quotes (
-  id uuid primary key default uuid_generate_v4(),
+  id text primary key,
   text text not null,
   reference text not null,
   theme text not null,
@@ -19,7 +19,7 @@ create index if not exists quotes_theme_idx on public.quotes (theme);
 
 -- Opportunities table
 create table if not exists public.opportunities (
-  id uuid primary key default uuid_generate_v4(),
+  id text primary key,
   organization_name text not null,
   organization_type text not null check (organization_type in ('charity', 'church', 'community', 'environmental', 'healthcare', 'education', 'other')),
   opportunity_title text not null,
@@ -28,7 +28,7 @@ create table if not exists public.opportunities (
   location jsonb not null default '{}'::jsonb,
   skills_needed text[] not null default '{}',
   cause_categories text[] not null default '{}',
-  related_quotes uuid[] not null default '{}',
+  related_quotes text[] not null default '{}',
   urgency_level text not null default 'ongoing' check (urgency_level in ('immediate', 'high', 'ongoing', 'seasonal')),
   contact_info jsonb not null default '{}'::jsonb,
   website_url text,
@@ -56,7 +56,7 @@ create index if not exists opportunities_embedding_idx on public.opportunities u
 -- Opportunity interest table
 create table if not exists public.opportunity_interest (
   id uuid primary key default uuid_generate_v4(),
-  opportunity_id uuid not null references public.opportunities (id) on delete cascade,
+  opportunity_id text not null references public.opportunities (id) on delete cascade,
   user_id text,
   metadata jsonb,
   created_at timestamptz not null default now()
@@ -67,7 +67,7 @@ create index if not exists opportunity_interest_opportunity_idx
 
 -- Table to store raw news events retrieved from NewsAPI + AI pipeline
 create table if not exists public.news_events (
-  id uuid primary key default uuid_generate_v4(),
+  id text primary key,
   external_id text unique,
   headline text not null,
   summary text,
@@ -76,8 +76,8 @@ create table if not exists public.news_events (
   region text,
   category text,
   published_at timestamptz,
-  related_quote_ids uuid[] not null default '{}',
-  related_opportunity_ids uuid[] not null default '{}',
+  related_quote_ids text[] not null default '{}',
+  related_opportunity_ids text[] not null default '{}',
   embedding vector(1536),
   created_at timestamptz not null default now()
 );
@@ -89,8 +89,8 @@ create index if not exists news_events_embedding_idx on public.news_events using
 -- Table to store AI-matched quotes per news event
 create table if not exists public.news_quote_matches (
   id uuid primary key default uuid_generate_v4(),
-  news_event_id uuid not null references public.news_events (id) on delete cascade,
-  quote_id uuid not null references public.quotes (id) on delete cascade,
+  news_event_id text not null references public.news_events (id) on delete cascade,
+  quote_id text not null references public.quotes (id) on delete cascade,
   similarity double precision not null,
   selected boolean not null default false,
   created_at timestamptz not null default now()
@@ -102,7 +102,7 @@ create index if not exists news_quote_matches_quote_idx on public.news_quote_mat
 -- Quote to action mapping table for intelligent matching
 create table if not exists public.quote_action_mappings (
   id uuid primary key default uuid_generate_v4(),
-  quote_id uuid not null references public.quotes (id) on delete cascade,
+  quote_id text not null references public.quotes (id) on delete cascade,
   cause_category text not null,
   action_types text[] not null default '{}',
   keywords text[] not null default '{}',
@@ -133,8 +133,8 @@ create index if not exists user_preferences_user_idx on public.user_preferences 
 -- News to opportunity matches for direct action connections
 create table if not exists public.news_opportunity_matches (
   id uuid primary key default uuid_generate_v4(),
-  news_event_id uuid not null references public.news_events (id) on delete cascade,
-  opportunity_id uuid not null references public.opportunities (id) on delete cascade,
+  news_event_id text not null references public.news_events (id) on delete cascade,
+  opportunity_id text not null references public.opportunities (id) on delete cascade,
   similarity double precision not null,
   relevance_score double precision not null default 0.5,
   created_at timestamptz not null default now(),
@@ -173,8 +173,8 @@ create table if not exists public.user_questions (
   id uuid primary key default uuid_generate_v4(),
   user_id text,
   question text not null,
-  matched_quote_ids uuid[] default '{}',
-  matched_opportunity_ids uuid[] default '{}',
+  matched_quote_ids text[] default '{}',
+  matched_opportunity_ids text[] default '{}',
   reflection text,
   ip_address text,
   user_agent text,
@@ -188,7 +188,7 @@ create index if not exists user_questions_created_idx on public.user_questions (
 create table if not exists public.quote_saves (
   id uuid primary key default uuid_generate_v4(),
   user_id text not null,
-  quote_id uuid not null references public.quotes (id) on delete cascade,
+  quote_id text not null references public.quotes (id) on delete cascade,
   notes text,
   created_at timestamptz not null default now(),
   unique(user_id, quote_id)
@@ -228,10 +228,10 @@ create table if not exists public.match_feedback (
   id uuid primary key default uuid_generate_v4(),
   user_id text,
   match_type text not null check (match_type in ('event_quote', 'event_opportunity', 'question_quote', 'question_opportunity')),
-  event_id uuid,
+  event_id text,
   question_id uuid,
-  quote_id uuid references public.quotes (id) on delete cascade,
-  opportunity_id uuid references public.opportunities (id) on delete cascade,
+  quote_id text references public.quotes (id) on delete cascade,
+  opportunity_id text references public.opportunities (id) on delete cascade,
   rating integer check (rating between 1 and 5),
   helpful boolean,
   feedback_text text,
@@ -272,9 +272,9 @@ create index if not exists user_engagement_created_idx on public.user_engagement
 create table if not exists public.daily_features (
   id uuid primary key default uuid_generate_v4(),
   feature_date date unique not null default current_date,
-  featured_event_id uuid references public.news_events (id) on delete set null,
-  featured_quote_id uuid references public.quotes (id) on delete set null,
-  featured_opportunity_id uuid references public.opportunities (id) on delete set null,
+  featured_event_id text references public.news_events (id) on delete set null,
+  featured_quote_id text references public.quotes (id) on delete set null,
+  featured_opportunity_id text references public.opportunities (id) on delete set null,
   reflection text,
   active boolean not null default true,
   created_at timestamptz not null default now(),
@@ -306,7 +306,7 @@ from public.opportunities o
 left join public.opportunity_interest oi on o.id = oi.opportunity_id
 left join public.user_engagement ue on 
   ue.event_type = 'opportunity_view' and 
-  (ue.event_data->>'opportunity_id')::uuid = o.id
+  (ue.event_data->>'opportunity_id') = o.id
 left join public.match_feedback mf on 
   mf.opportunity_id = o.id
 where o.active_status = true
@@ -318,7 +318,7 @@ create or replace function public.get_user_recommendations(
   p_limit integer default 10
 )
 returns table (
-  opportunity_id uuid,
+  opportunity_id text,
   opportunity_title text,
   organization_name text,
   description text,
@@ -393,7 +393,7 @@ create or replace function public.get_trending_opportunities(
   p_limit integer default 10
 )
 returns table (
-  opportunity_id uuid,
+  opportunity_id text,
   opportunity_title text,
   organization_name text,
   interest_count bigint,
@@ -419,7 +419,7 @@ begin
     oi.created_at > now() - make_interval(days => p_days)
   left join public.user_engagement ue on 
     ue.event_type = 'opportunity_view' and 
-    (ue.event_data->>'opportunity_id')::uuid = o.id and
+    (ue.event_data->>'opportunity_id') = o.id and
     ue.created_at > now() - make_interval(days => p_days)
   where o.active_status = true
   group by o.id, o.opportunity_title, o.organization_name, o.urgency_level
