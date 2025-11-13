@@ -68,7 +68,7 @@ export function DualPillarHero({
         {[left, right].map((pillar) => (
           <article
             key={pillar.label}
-            className={`rounded-2xl border p-5 transition hover:-translate-y-1 ${
+            className={`flex flex-col rounded-2xl border p-5 transition hover:-translate-y-1 ${
               pillar.accent === 'news'
                 ? 'border-amber-200 bg-white/70'
                 : 'border-green-200 bg-green-50/70'
@@ -90,7 +90,7 @@ export function DualPillarHero({
               {pillar.headline}
             </h3>
             <p className='mt-2 text-sm text-neutral-700'>{pillar.summary}</p>
-            <div className='mt-4 rounded-xl bg-white/70 p-4 text-sm text-neutral-700'>
+            <div className='mt-4 flex-grow rounded-xl bg-white/70 p-4 text-sm text-neutral-700'>
               <p className='text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-red-500'>
                 {pillar.scriptureLabel}
               </p>
