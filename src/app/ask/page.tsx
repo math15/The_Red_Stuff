@@ -1,6 +1,8 @@
 import { BrainCircuit, MailQuestion, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 
+import { PageViewTracker } from '@/components/analytics/PageViewTracker';
+import { QuestionMatcher } from '@/components/ask/QuestionMatcher';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 
 const prompts = [
@@ -27,23 +29,16 @@ const prompts = [
 export default function AskPage() {
   return (
     <div className='space-y-10 pb-16'>
+      <PageViewTracker pageName='ask' />
       <section className='rounded-3xl border border-rose-200 bg-gradient-to-br from-[#fef6ff] via-white to-[#f2edff] p-8 shadow-lg shadow-rose-100/70'>
         <SectionHeader
           kicker='Ask & Receive'
           title='Bring your hardest questions'
-          description='Soon you’ll be able to submit questions, headlines, or personal burdens and get matched to a word of Jesus plus a practical response.'
+          description='Submit your questions, headlines, or personal burdens and get matched to a word of Jesus plus a practical response.'
         />
-        <p className='mt-4 text-sm text-neutral-700'>
-          We’re finishing the guided workflow. In the meantime, email{' '}
-          <a
-            className='text-red-600 underline'
-            href='mailto:ask@theredstuff.org'
-          >
-            ask@theredstuff.org
-          </a>{' '}
-          and we’ll reply within 48 hours.
-        </p>
       </section>
+
+      <QuestionMatcher />
 
       <div className='grid gap-4 md:grid-cols-3'>
         {prompts.map((prompt) => (

@@ -15,6 +15,7 @@ import {
   getQuotesForOpportunity,
 } from '@/lib/opportunity-service';
 
+import { PageViewTracker } from '@/components/analytics/PageViewTracker';
 import { DualPillarHero } from '@/components/hero/DualPillarHero';
 import { OpportunityCard } from '@/components/opportunities/OpportunityCard';
 import { RecommendationsPanel } from '@/components/opportunities/RecommendationsPanel';
@@ -156,6 +157,7 @@ export default async function HomePage() {
 
   return (
     <div className='space-y-12 pb-16'>
+      <PageViewTracker pageName='home' />
       {hero}
       <div className='mt-4 flex flex-wrap gap-3 text-sm font-semibold'>
         <Link

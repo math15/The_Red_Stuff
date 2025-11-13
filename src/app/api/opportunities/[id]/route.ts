@@ -7,9 +7,10 @@ import {
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const opportunity = await getOpportunityById(params.id);
+  const { id } = await params;
+  const opportunity = await getOpportunityById(id);
 
   if (!opportunity) {
     return NextResponse.json(

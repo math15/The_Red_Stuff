@@ -6,6 +6,23 @@ import logger from '@/lib/logger';
 
 import { CauseCategory, CurrentEvent } from '@/types';
 
+// Type definitions for NewsAPI responses
+interface NewsAPIArticle {
+  title?: string | null;
+  description?: string | null;
+  content?: string | null;
+  url?: string | null;
+  publishedAt?: string | null;
+  source?: {
+    name?: string | null;
+  } | null;
+}
+
+interface NewsAPIResponse {
+  status: string;
+  articles?: NewsAPIArticle[];
+}
+
 type KeywordRule = {
   keywords: string[];
   quoteIds: string[];
@@ -77,19 +94,19 @@ export const fetchNewsEvents = cache(async (): Promise<CurrentEvent[]> => {
   }
 
   try {
-    const response = await newsApiClient.v2.topHeadlines({
+    const response = (await newsApiClient.v2.topHeadlines({
       language: 'en',
       country: 'us',
       pageSize: 5,
-    });
+    })) as unknown as NewsAPIResponse;
 
     if (response.status !== 'ok' || !response.articles?.length) {
       return [];
     }
 
     return response.articles
-      .filter((article) => Boolean(article.title))
-      .map((article, index) => {
+      .filter((article: NewsAPIArticle) => Boolean(article.title))
+      .map((article: NewsAPIArticle, index: number) => {
         const summary = article.description ?? article.content ?? '';
         const rule = matchRule(`${article.title ?? ''} ${summary}`);
         const related_quote_ids = rule?.quoteIds ?? [DEFAULT_QUOTE];

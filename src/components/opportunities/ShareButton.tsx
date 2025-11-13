@@ -3,16 +3,34 @@
 import { Check, Share2 } from 'lucide-react';
 import { useState } from 'react';
 
+import { UserActionsService } from '@/lib/user-actions.client';
+
 interface ShareOpportunityButtonProps {
   title: string;
+  opportunityId?: string;
 }
 
-export function ShareOpportunityButton({ title }: ShareOpportunityButtonProps) {
+export function ShareOpportunityButton({
+  title,
+  opportunityId,
+}: ShareOpportunityButtonProps) {
   const [copied, setCopied] = useState(false);
 
   const handleShare = async () => {
     const url = window.location.href;
-    if (navigator.share) {
+    const hasNativeShare =
+      typeof navigator !== 'undefined' && 'share' in navigator;
+
+    // Track share action
+    if (opportunityId) {
+      UserActionsService.trackShare(
+        'opportunity',
+        opportunityId,
+        hasNativeShare ? 'native' : 'clipboard'
+      );
+    }
+
+    if (hasNativeShare) {
       try {
         await navigator.share({
           title,

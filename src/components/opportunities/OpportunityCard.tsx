@@ -1,3 +1,5 @@
+'use client';
+
 import {
   ArrowUpRight,
   CheckCircle,
@@ -7,6 +9,8 @@ import {
   QuoteIcon,
 } from 'lucide-react';
 import Link from 'next/link';
+
+import { UserActionsService } from '@/lib/user-actions.client';
 
 import { Opportunity, Quote as QuoteType } from '@/types';
 
@@ -33,6 +37,10 @@ export function OpportunityCard({
       : [opportunity.location.city, opportunity.location.state]
           .filter(Boolean)
           .join(', ');
+
+  const handleClick = () => {
+    UserActionsService.trackOpportunityClick(opportunity.id);
+  };
 
   return (
     <article className='flex h-full flex-col rounded-2xl border border-rose-200 bg-white/90 p-5 shadow-sm shadow-rose-100/70 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-rose-200/70'>
@@ -108,6 +116,7 @@ export function OpportunityCard({
       <div className='mt-4 flex flex-wrap gap-3 text-sm font-semibold'>
         <Link
           href={`/opportunities/${opportunity.id}`}
+          onClick={handleClick}
           className='inline-flex grow items-center justify-center gap-2 rounded-full border border-neutral-200 px-4 py-2 text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-50'
         >
           Learn More
@@ -115,6 +124,7 @@ export function OpportunityCard({
         {opportunity.application_url ? (
           <Link
             href={opportunity.application_url}
+            onClick={handleClick}
             target='_blank'
             rel='noreferrer'
             className='inline-flex grow items-center justify-center gap-2 rounded-full bg-green-700 px-4 py-2 text-white shadow-lg shadow-green-500/40 transition hover:-translate-y-0.5 hover:bg-green-600'
@@ -125,6 +135,7 @@ export function OpportunityCard({
         ) : (
           <Link
             href={`/opportunities/${opportunity.id}?intent=interested`}
+            onClick={handleClick}
             className='inline-flex grow items-center justify-center gap-2 rounded-full bg-green-700 px-4 py-2 text-white shadow-lg shadow-green-500/40 transition hover:-translate-y-0.5 hover:bg-green-600'
           >
             <ArrowUpRight className='h-4 w-4' />

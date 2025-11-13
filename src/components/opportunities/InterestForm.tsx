@@ -3,6 +3,8 @@
 import { CheckCircle2, Loader2, Send } from 'lucide-react';
 import { FormEvent, useState } from 'react';
 
+import { UserActionsService } from '@/lib/user-actions.client';
+
 interface OpportunityInterestFormProps {
   opportunityId: string;
   applicationUrl?: string;
@@ -36,6 +38,12 @@ export function OpportunityInterestForm({
       if (!response.ok) {
         throw new Error('Unable to record interest');
       }
+
+      // Track engagement
+      UserActionsService.trackEngagement({
+        eventType: 'interest_expressed',
+        eventData: { opportunity_id: opportunityId },
+      });
 
       setStatus('success');
       setEmail('');

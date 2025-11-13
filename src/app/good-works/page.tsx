@@ -10,6 +10,7 @@ import {
   getQuotesForOpportunity,
 } from '@/lib/opportunity-service';
 
+import { PageViewTracker } from '@/components/analytics/PageViewTracker';
 import { GoodWorksExplorer } from '@/components/opportunities/GoodWorksExplorer';
 import { OpportunityCard } from '@/components/opportunities/OpportunityCard';
 import { SectionHeader } from '@/components/ui/SectionHeader';
@@ -126,6 +127,10 @@ export default async function GoodWorksPage({
 
   return (
     <div className='space-y-10 pb-20'>
+      <PageViewTracker
+        pageName='good_works'
+        metadata={{ hasFilters: Object.keys(resolvedSearchParams).length > 0 }}
+      />
       <section className='rounded-3xl border border-rose-200 bg-gradient-to-br from-[#fff7ed] via-white to-[#f6f1eb] p-8 shadow-xl shadow-rose-100/70'>
         <div className='grid gap-6 md:grid-cols-2'>
           <div>

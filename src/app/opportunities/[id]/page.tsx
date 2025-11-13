@@ -8,19 +8,21 @@ import {
   getQuotesForOpportunity,
 } from '@/lib/opportunity-service';
 
+import { PageViewTracker } from '@/components/analytics/PageViewTracker';
 import { OpportunityInterestForm } from '@/components/opportunities/InterestForm';
 import { OpportunityCard } from '@/components/opportunities/OpportunityCard';
 import { ShareOpportunityButton } from '@/components/opportunities/ShareButton';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 
 interface OpportunityPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default async function OpportunityPage({
   params,
 }: OpportunityPageProps) {
-  const opportunity = await getOpportunityById(params.id);
+  const { id } = await params;
+  const opportunity = await getOpportunityById(id);
 
   if (!opportunity) {
     notFound();
@@ -50,6 +52,13 @@ export default async function OpportunityPage({
 
   return (
     <div className='space-y-10 pb-16'>
+      <PageViewTracker
+        pageName='opportunity_detail'
+        metadata={{
+          opportunityId: opportunity.id,
+          title: opportunity.opportunity_title,
+        }}
+      />
       <section className='rounded-3xl border border-rose-200 bg-gradient-to-br from-[#fff7ed] via-white to-[#f5efe7] p-8 shadow-lg shadow-rose-100/70'>
         <div className='flex flex-col gap-6 md:flex-row md:justify-between'>
           <div className='space-y-4'>
@@ -88,7 +97,10 @@ export default async function OpportunityPage({
                 Apply on partner site
               </Link>
             ) : null}
-            <ShareOpportunityButton title={opportunity.opportunity_title} />
+            <ShareOpportunityButton
+              title={opportunity.opportunity_title}
+              opportunityId={opportunity.id}
+            />
           </div>
         </div>
 

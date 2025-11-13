@@ -9,10 +9,12 @@ import { quotes as staticQuotes } from '@/data/quotes';
 
 import {
   CauseCategory,
+  CurrentEvent,
   Opportunity,
   OpportunityLocationMode,
   Quote,
   Tables,
+  TablesInsert,
 } from '@/types';
 
 const isSupabaseConfigured =
@@ -161,7 +163,73 @@ export const loadQuotes = cache(async (): Promise<Quote[]> => {
   }
 });
 
+const mapNewsEventRow = (row: Tables<'news_events'>): CurrentEvent => ({
+  id: row.external_id ?? row.id,
+  headline: row.headline,
+  summary: row.summary ?? '',
+  category: (row.category as CauseCategory) ?? 'community',
+  region: row.region ?? row.source ?? 'Global',
+  published_at: row.published_at ?? row.created_at ?? new Date().toISOString(),
+  related_quote_ids: row.related_quote_ids ?? [],
+  related_opportunity_ids: row.related_opportunity_ids ?? [],
+});
+
+const getSupabaseNewsEvents = async (): Promise<CurrentEvent[]> => {
+  if (!isSupabaseConfigured) {
+    return [];
+  }
+
+  try {
+    const supabase = getServiceSupabase();
+    const { data, error } = await supabase
+      .from('news_events')
+      .select('*')
+      .order('published_at', { ascending: false })
+      .limit(5);
+
+    if (error || !data?.length) {
+      return [];
+    }
+
+    return data.map(mapNewsEventRow);
+  } catch {
+    return [];
+  }
+};
+
+const persistNewsEvents = async (events: CurrentEvent[]) => {
+  if (!isSupabaseConfigured || events.length === 0) return;
+
+  const supabase = getServiceSupabase();
+  const newsInserts: TablesInsert<'news_events'>[] = events.map((event) => ({
+    external_id: event.id,
+    headline: event.headline,
+    summary: event.summary,
+    source: event.region,
+    url: event.id?.startsWith('http') ? event.id : null,
+    region: event.region,
+    category: event.category,
+    published_at: event.published_at,
+    related_quote_ids: event.related_quote_ids ?? [],
+    related_opportunity_ids: event.related_opportunity_ids ?? [],
+  }));
+
+  // @ts-expect-error - Supabase type inference issue with upsert
+  await supabase.from('news_events').upsert(newsInserts);
+};
+
 export const loadCurrentEvents = cache(async () => {
+  const supabaseEvents = await getSupabaseNewsEvents();
+  if (supabaseEvents.length > 0) {
+    return supabaseEvents;
+  }
+
   const newsEvents = await fetchNewsEvents();
-  return newsEvents.length > 0 ? newsEvents : staticEvents;
+
+  if (newsEvents.length > 0) {
+    await persistNewsEvents(newsEvents);
+    return newsEvents;
+  }
+
+  return staticEvents;
 });

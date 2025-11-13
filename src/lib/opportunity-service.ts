@@ -261,7 +261,9 @@ export const recordOpportunityInterest = async ({
       },
     };
 
-  const { error } = await supabase.from('opportunity_interest').insert(payload);
+  const { error } = await supabase
+    .from('opportunity_interest')
+    .insert(payload as unknown as never);
 
   if (error) {
     throw new Error(`Unable to record interest: ${error.message}`);

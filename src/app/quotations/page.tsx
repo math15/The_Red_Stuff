@@ -1,11 +1,13 @@
 import { quotes } from '@/data/quotes';
 
+import { PageViewTracker } from '@/components/analytics/PageViewTracker';
 import { QuoteCard } from '@/components/quotes/QuoteCard';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 
 export default function QuotationsPage() {
   return (
     <div className='space-y-10 pb-16'>
+      <PageViewTracker pageName='quotations' />
       <section className='rounded-3xl border border-rose-200 bg-gradient-to-br from-[#fff6ef] via-white to-[#f7f0ea] p-8 shadow-lg shadow-rose-100/70'>
         <SectionHeader
           kicker='Scripture Library'
