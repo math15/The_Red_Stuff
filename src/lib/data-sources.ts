@@ -219,11 +219,7 @@ const persistNewsEvents = async (events: CurrentEvent[]) => {
 };
 
 export const loadCurrentEvents = cache(async () => {
-  const supabaseEvents = await getSupabaseNewsEvents();
-  if (supabaseEvents.length > 0) {
-    return supabaseEvents;
-  }
-
+  // Try NewsAPI first if configured
   const newsEvents = await fetchNewsEvents();
 
   if (newsEvents.length > 0) {
@@ -231,5 +227,12 @@ export const loadCurrentEvents = cache(async () => {
     return newsEvents;
   }
 
+  // Fall back to Supabase cache
+  const supabaseEvents = await getSupabaseNewsEvents();
+  if (supabaseEvents.length > 0) {
+    return supabaseEvents;
+  }
+
+  // Final fallback to static
   return staticEvents;
 });
