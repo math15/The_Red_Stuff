@@ -17,7 +17,7 @@ interface ActionFlowCardProps {
 
 export function ActionFlowCard({ steps }: ActionFlowCardProps) {
   return (
-    <div className='rounded-3xl border border-rose-200 bg-white/90 p-5 shadow-xl shadow-rose-100/60'>
+    <div className='rounded-3xl border border-rose-200 bg-[#ffffff] p-5 shadow-xl shadow-rose-100/60'>
       <div className='grid gap-4 md:grid-cols-3'>
         {steps.map((step, index) => (
           <div

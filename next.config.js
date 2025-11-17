@@ -6,6 +6,9 @@ const nextConfig = {
 
   reactStrictMode: true,
 
+  // Allow cross-origin requests from your production domain
+  allowedDevOrigins: ['jackpotreporting.ddns.net'],
+
   // Uncoment to add domain whitelist
   // images: {
   //   remotePatterns: [

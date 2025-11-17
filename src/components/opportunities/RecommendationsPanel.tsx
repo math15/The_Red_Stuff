@@ -184,12 +184,12 @@ export function RecommendationsPanel() {
       </div>
 
       {isLoading ? (
-        <div className='flex flex-col items-center gap-2 rounded-2xl border border-green-200 bg-white/90 p-6 text-sm text-neutral-600'>
+        <div className='flex flex-col items-center gap-2 rounded-2xl border border-green-200 bg-[#ffffff] p-6 text-sm text-neutral-600'>
           <Loader2 className='h-5 w-5 animate-spin text-green-600' />
           Updating matches…
         </div>
       ) : recommendations.length === 0 ? (
-        <div className='rounded-2xl border border-green-200 bg-white/90 p-6 text-center text-sm text-neutral-600'>
+        <div className='rounded-2xl border border-green-200 bg-[#ffffff] p-6 text-center text-sm text-neutral-600'>
           We couldn’t find a match for that combo yet. Try broadening the cause
           or removing skills.
         </div>

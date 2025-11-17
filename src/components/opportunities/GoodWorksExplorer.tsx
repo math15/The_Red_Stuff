@@ -105,7 +105,7 @@ export function GoodWorksExplorer({
       />
 
       {isLoading ? (
-        <div className='flex flex-col items-center gap-2 rounded-3xl border border-rose-200 bg-white/80 p-10 text-sm text-neutral-600'>
+        <div className='flex flex-col items-center gap-2 rounded-3xl border border-rose-200 bg-[#ffffff] p-10 text-sm text-neutral-600'>
           <Loader2 className='h-5 w-5 animate-spin text-red-600' />
           Refreshing matches…
         </div>
@@ -117,7 +117,7 @@ export function GoodWorksExplorer({
       ) : null}
 
       {results.length === 0 ? (
-        <div className='rounded-3xl border border-rose-200 bg-white/90 p-8 text-center text-sm text-neutral-600'>
+        <div className='rounded-3xl border border-rose-200 bg-[#ffffff] p-8 text-center text-sm text-neutral-600'>
           <p>No opportunities match those filters yet.</p>
           <p className='mt-2'>
             Try widening your location or selecting “Any schedule” to discover

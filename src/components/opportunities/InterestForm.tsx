@@ -56,9 +56,9 @@ export function OpportunityInterestForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className='space-y-4 rounded-2xl border border-rose-200 bg-white/90 p-5 text-sm text-neutral-700'
+      className='space-y-4 rounded-2xl border border-rose-200 bg-[#ffffff] p-5 text-sm text-neutral-700'
     >
-      <p className='text-xs font-semibold uppercase tracking-[0.35em] text-red-600'>
+      <p className='text-xs font-semibold uppercase tracking-[0.35em] text-neutral-700'>
         I’m interested
       </p>
       <p className='text-sm text-neutral-600'>

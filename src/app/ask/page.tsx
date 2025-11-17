@@ -28,9 +28,9 @@ const prompts = [
 
 export default function AskPage() {
   return (
-    <div className='space-y-10 pb-16'>
+    <div className='mx-auto w-[92%] max-w-6xl space-y-10 pb-16'>
       <PageViewTracker pageName='ask' />
-      <section className='rounded-3xl border border-rose-200 bg-gradient-to-br from-[#fef6ff] via-white to-[#f2edff] p-8 shadow-lg shadow-rose-100/70'>
+      <section className='rounded-3xl border border-rose-200 bg-[#ffffff] p-8 shadow-lg shadow-rose-100/70'>
         <SectionHeader
           kicker='Ask & Receive'
           title='Bring your hardest questions'
@@ -44,7 +44,7 @@ export default function AskPage() {
         {prompts.map((prompt) => (
           <article
             key={prompt.title}
-            className='rounded-2xl border border-rose-100 bg-white/90 p-5 text-sm text-neutral-700'
+            className='rounded-2xl border border-rose-100 bg-[#ffffff] p-5 text-sm text-neutral-700'
           >
             <prompt.icon className='h-6 w-6 text-red-600' />
             <h3 className='mt-3 text-lg font-semibold text-neutral-900'>

@@ -100,14 +100,14 @@ export function OpportunityFilters({
   };
 
   return (
-    <div className='rounded-3xl border border-rose-200 bg-white/90 p-5 shadow-lg shadow-rose-100/60'>
+    <div className='rounded-3xl border border-rose-200 bg-[#ffffff] p-5 shadow-lg shadow-rose-100/60'>
       <div className='flex flex-wrap items-center justify-between gap-3'>
         <div className='flex items-center gap-3'>
           <span className='inline-flex h-11 w-11 items-center justify-center rounded-full bg-red-50 text-red-600'>
             <SlidersHorizontal className='h-5 w-5' strokeWidth={1.8} />
           </span>
           <div>
-            <p className='text-xs font-semibold uppercase tracking-[0.35em] text-red-600'>
+            <p className='text-xs font-semibold uppercase tracking-[0.35em] text-neutral-600'>
               Search filters
             </p>
             <p className='text-sm font-medium text-neutral-700'>
@@ -159,7 +159,7 @@ export function OpportunityFilters({
             <button
               type='button'
               onClick={handleUseLocation}
-              className='inline-flex items-center justify-center rounded-2xl border border-red-200 bg-red-50 px-3 text-sm font-semibold text-red-600 transition hover:bg-red-100'
+              className='inline-flex items-center justify-center rounded-2xl border border-red-200 bg-red-50 px-3 text-sm font-semibold text-neutral-600 transition hover:bg-red-100'
             >
               {isLocating ? (
                 'Locating...'

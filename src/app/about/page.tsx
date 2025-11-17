@@ -20,8 +20,8 @@ const pillars = [
 
 export default function AboutPage() {
   return (
-    <div className='space-y-10 pb-16'>
-      <section className='rounded-3xl border border-rose-200 bg-gradient-to-br from-[#fff5f2] via-white to-[#f2faf3] p-8 shadow-lg shadow-rose-100/70'>
+    <div className='mx-auto w-[92%] max-w-6xl space-y-10 pb-16'>
+      <section className='rounded-3xl border border-neutral-200 bg-[#ffffff] p-8 shadow-lg'>
         <SectionHeader
           kicker='Mission'
           title='Wisdom to Action'
@@ -39,9 +39,9 @@ export default function AboutPage() {
         {pillars.map((pillar) => (
           <article
             key={pillar.title}
-            className='rounded-2xl border border-rose-100 bg-white/90 p-5 text-sm text-neutral-700'
+            className='rounded-2xl border border-neutral-200 bg-[#ffffff] p-5 text-sm text-neutral-700'
           >
-            <p className='text-xs font-semibold uppercase tracking-[0.35em] text-red-600'>
+            <p className='text-xs font-semibold uppercase tracking-[0.35em] text-neutral-600'>
               Pillar
             </p>
             <h3 className='mt-2 text-lg font-semibold text-neutral-900'>
@@ -52,8 +52,8 @@ export default function AboutPage() {
         ))}
       </div>
 
-      <div className='rounded-3xl border border-amber-200 bg-amber-50/70 p-6 text-sm text-neutral-700'>
-        <p className='text-xs font-semibold uppercase tracking-[0.35em] text-amber-700'>
+      <div className='rounded-3xl border border-neutral-200 bg-[#ffffff] p-6 text-sm text-neutral-700'>
+        <p className='text-xs font-semibold uppercase tracking-[0.35em] text-neutral-700'>
           What’s next
         </p>
         <p className='mt-2 text-lg font-semibold text-neutral-900'>
@@ -64,7 +64,7 @@ export default function AboutPage() {
           Until then, we’re curating opportunities manually and collecting
           feedback from early adopters like you. Email{' '}
           <a
-            className='text-red-600 underline'
+            className='text-neutral-700 underline'
             href='mailto:hello@theredstuff.org'
           >
             hello@theredstuff.org

@@ -3,6 +3,7 @@ import * as React from 'react';
 
 import '@/styles/globals.css';
 
+import { MobileNav } from '@/components/layout/MobileNav';
 import { SiteFooter } from '@/components/layout/SiteFooter';
 import { SiteHeader } from '@/components/layout/SiteHeader';
 
@@ -25,7 +26,7 @@ export const metadata: Metadata = {
     shortcut: '/favicon/favicon-16x16.png',
     apple: '/favicon/apple-touch-icon.png',
   },
-  manifest: `/favicon/site.webmanifest`,
+  manifest: `${siteConfig.url}/favicon/site.webmanifest`,
   openGraph: {
     url: siteConfig.url,
     title: siteConfig.title,
@@ -57,9 +58,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang='en'>
-      <body className='bg-[#fff9f3] text-neutral-900 antialiased'>
+      <body className='bg-[#f5f5f4] text-neutral-900 antialiased'>
         <SiteHeader />
-        <main className='mx-auto w-11/12 max-w-6xl py-10'>{children}</main>
+        <main className='w-full py-10'>{children}</main>
+        <MobileNav />
         <SiteFooter />
       </body>
     </html>

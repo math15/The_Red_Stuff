@@ -51,7 +51,7 @@ export default async function OpportunityPage({
           .join(', ');
 
   return (
-    <div className='space-y-10 pb-16'>
+    <div className='mx-auto w-[92%] max-w-6xl space-y-10 pb-16'>
       <PageViewTracker
         pageName='opportunity_detail'
         metadata={{
@@ -59,10 +59,10 @@ export default async function OpportunityPage({
           title: opportunity.opportunity_title,
         }}
       />
-      <section className='rounded-3xl border border-rose-200 bg-gradient-to-br from-[#fff7ed] via-white to-[#f5efe7] p-8 shadow-lg shadow-rose-100/70'>
+      <section className='rounded-3xl border border-neutral-200 bg-[#ffffff] p-8 shadow-lg shadow-rose-100/70'>
         <div className='flex flex-col gap-6 md:flex-row md:justify-between'>
           <div className='space-y-4'>
-            <p className='text-xs font-semibold uppercase tracking-[0.35em] text-red-600'>
+            <p className='text-xs font-semibold uppercase tracking-[0.35em] text-neutral-700'>
               {opportunity.organization_name}
             </p>
             <h1 className='text-3xl font-semibold text-neutral-900 md:text-4xl'>
@@ -72,16 +72,16 @@ export default async function OpportunityPage({
               {opportunity.description}
             </p>
             <div className='flex flex-wrap gap-3 text-xs font-semibold text-neutral-600'>
-              <span className='inline-flex items-center gap-2 rounded-full border border-rose-200 bg-white px-4 py-2'>
-                <Timer className='h-4 w-4 text-red-500' />
+              <span className='inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 py-2'>
+                <Timer className='h-4 w-4 text-neutral-700' />
                 {opportunity.time_commitment}
               </span>
-              <span className='inline-flex items-center gap-2 rounded-full border border-green-200 bg-white px-4 py-2'>
-                <MapPinned className='h-4 w-4 text-green-600' />
+              <span className='inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 py-2'>
+                <MapPinned className='h-4 w-4 text-neutral-700' />
                 {locationLabel}
               </span>
-              <span className='inline-flex items-center gap-2 rounded-full border border-amber-200 bg-white px-4 py-2 capitalize'>
-                <ShieldCheck className='h-4 w-4 text-amber-600' />
+              <span className='inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 py-2 capitalize'>
+                <ShieldCheck className='h-4 w-4 text-neutral-700' />
                 {opportunity.urgency_level} need
               </span>
             </div>
@@ -92,7 +92,7 @@ export default async function OpportunityPage({
                 href={opportunity.application_url}
                 target='_blank'
                 rel='noreferrer'
-                className='inline-flex items-center justify-center rounded-full bg-green-700 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-green-500/40 transition hover:-translate-y-0.5'
+                className='inline-flex items-center justify-center rounded-full bg-neutral-700 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-neutral-500/40 transition hover:-translate-y-0.5'
               >
                 Apply on partner site
               </Link>
@@ -105,8 +105,8 @@ export default async function OpportunityPage({
         </div>
 
         {opportunity.highlight_reason ? (
-          <div className='mt-6 rounded-2xl border border-amber-200 bg-amber-50/70 p-4 text-sm text-neutral-700'>
-            <p className='text-xs font-semibold uppercase tracking-[0.35em] text-amber-700'>
+          <div className='mt-6 rounded-2xl border border-neutral-200 bg-[#ffffff] p-4 text-sm text-neutral-700'>
+            <p className='text-xs font-semibold uppercase tracking-[0.35em] text-neutral-700'>
               Why this matters now
             </p>
             <p className='mt-1 text-neutral-800'>
@@ -118,8 +118,8 @@ export default async function OpportunityPage({
 
       <div className='grid gap-6 md:grid-cols-[2fr,1fr]'>
         <div className='space-y-6'>
-          <div className='rounded-3xl border border-rose-200 bg-white/90 p-6 text-sm text-neutral-700'>
-            <p className='text-xs font-semibold uppercase tracking-[0.35em] text-red-600'>
+          <div className='rounded-3xl border border-neutral-200 bg-[#ffffff] p-6 text-sm text-neutral-700'>
+            <p className='text-xs font-semibold uppercase tracking-[0.35em] text-neutral-700'>
               Overview
             </p>
             <p className='mt-3 text-neutral-700'>{opportunity.description}</p>
@@ -132,7 +132,7 @@ export default async function OpportunityPage({
                   {opportunity.skills_needed.map((skill) => (
                     <li
                       key={skill}
-                      className='rounded-full bg-rose-50 px-3 py-1 text-sm text-rose-700'
+                      className='rounded-full bg-neutral-100 px-3 py-1 text-sm text-neutral-700'
                     >
                       {skill}
                     </li>
@@ -147,7 +147,7 @@ export default async function OpportunityPage({
                   {opportunity.cause_categories.map((cause) => (
                     <li
                       key={cause}
-                      className='rounded-full bg-green-50 px-3 py-1 text-sm text-green-700'
+                      className='rounded-full bg-neutral-100 px-3 py-1 text-sm text-neutral-700'
                     >
                       {cause}
                     </li>
@@ -157,8 +157,8 @@ export default async function OpportunityPage({
             </div>
           </div>
 
-          <div className='rounded-3xl border border-rose-200 bg-white/90 p-6 text-sm text-neutral-700'>
-            <p className='text-xs font-semibold uppercase tracking-[0.35em] text-red-600'>
+          <div className='rounded-3xl border border-neutral-200 bg-[#ffffff] p-6 text-sm text-neutral-700'>
+            <p className='text-xs font-semibold uppercase tracking-[0.35em] text-neutral-700'>
               Time & location
             </p>
             <div className='mt-3 grid gap-4 md:grid-cols-2'>
@@ -185,7 +185,7 @@ export default async function OpportunityPage({
                 {opportunity.contact_info.email ? (
                   <a
                     href={`mailto:${opportunity.contact_info.email}`}
-                    className='text-red-600 underline'
+                    className='text-neutral-700 underline'
                   >
                     {opportunity.contact_info.email}
                   </a>
@@ -209,21 +209,21 @@ export default async function OpportunityPage({
             </div>
           </div>
 
-          <div className='rounded-3xl border border-rose-200 bg-white/90 p-6 text-sm text-neutral-700'>
-            <p className='text-xs font-semibold uppercase tracking-[0.35em] text-red-600'>
+          <div className='rounded-3xl border border-neutral-200 bg-[#ffffff] p-6 text-sm text-neutral-700'>
+            <p className='text-xs font-semibold uppercase tracking-[0.35em] text-neutral-700'>
               Scripture alignment
             </p>
             <div className='mt-3 grid gap-4 md:grid-cols-2'>
               {relatedQuotes.map((quote) => (
                 <article
                   key={quote.id}
-                  className='rounded-2xl border border-rose-100 bg-red-50/40 p-4'
+                  className='rounded-2xl border border-neutral-200 bg-[#ffffff] p-4'
                 >
-                  <p className='text-xs font-semibold uppercase tracking-[0.3em] text-red-600'>
+                  <p className='text-xs font-semibold uppercase tracking-[0.3em] text-neutral-500'>
                     {quote.reference}
                   </p>
-                  <p className='mt-2 text-base font-semibold text-neutral-900'>
-                    “{quote.text}”
+                  <p className='mt-2 text-base font-semibold text-red-600'>
+                    "{quote.text}"
                   </p>
                   {quote.context ? (
                     <p className='mt-1 text-xs text-neutral-500'>
@@ -241,8 +241,8 @@ export default async function OpportunityPage({
             opportunityId={opportunity.id}
             applicationUrl={opportunity.application_url}
           />
-          <div className='rounded-3xl border border-rose-200 bg-white/90 p-6 text-sm text-neutral-700'>
-            <p className='text-xs font-semibold uppercase tracking-[0.35em] text-red-600'>
+          <div className='rounded-3xl border border-neutral-200 bg-[#ffffff] p-6 text-sm text-neutral-700'>
+            <p className='text-xs font-semibold uppercase tracking-[0.35em] text-neutral-700'>
               Checklist
             </p>
             <ul className='mt-3 space-y-2'>
@@ -252,7 +252,7 @@ export default async function OpportunityPage({
                 'Willingness to pray with neighbors',
               ].map((item) => (
                 <li key={item} className='flex items-start gap-2'>
-                  <span className='mt-1 inline-block h-2 w-2 rounded-full bg-green-600' />
+                  <span className='mt-1 inline-block h-2 w-2 rounded-full bg-neutral-700' />
                   {item}
                 </li>
               ))}

@@ -63,7 +63,7 @@
 
 @layer base {
   body {
-    @apply bg-[#fff9f3] text-neutral-900 antialiased;
+    @apply bg-[#fafafa] text-neutral-900 antialiased;
   }
 
   /* inter var - latin */

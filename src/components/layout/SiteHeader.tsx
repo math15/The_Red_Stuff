@@ -1,13 +1,13 @@
 'use client';
 
-import { Flame, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
 const navLinks = [
   { href: '/', label: 'Home' },
-  { href: '/good-works', label: 'By Their Fruits' },
+  { href: '/good-works', label: 'Heed the Call' },
   { href: '/quotations', label: 'Quotations' },
   { href: '/ask', label: 'Ask' },
   { href: '/store', label: 'Store' },
@@ -26,21 +26,15 @@ export function SiteHeader() {
   };
 
   return (
-    <header className='sticky top-0 z-40 border-b border-rose-200 bg-[#fffaf3]/90 backdrop-blur'>
-      <div className='mx-auto flex w-11/12 max-w-6xl items-center justify-between py-4'>
+    <header className='sticky top-0 z-40 border-b border-rose-200 bg-white/95 backdrop-blur'>
+      <div className='mx-auto flex w-[92%] max-w-6xl items-center justify-between py-4'>
         <Link
           href='/'
-          className='flex items-center gap-2 text-lg font-semibold text-red-700'
+          className='flex items-center gap-2 text-lg font-semibold'
         >
-          <span className='inline-flex h-10 w-10 items-center justify-center rounded-full bg-red-100 text-red-600'>
-            <Flame className='h-5 w-5' strokeWidth={1.75} />
-          </span>
-          <div className='flex flex-col leading-tight'>
-            <span>The Red Stuff</span>
-            <span className='text-xs font-normal uppercase tracking-widest text-neutral-500'>
-              Wisdom → Action
-            </span>
-          </div>
+          <span className='text-neutral-900'>The</span>{' '}
+          <span className='text-red-600'>Red</span>{' '}
+          <span className='text-neutral-900'>Stuff</span>
         </Link>
 
         <nav className='hidden items-center gap-6 text-sm font-medium text-neutral-700 md:flex'>
@@ -62,7 +56,7 @@ export function SiteHeader() {
             href='/good-works'
             className='rounded-full bg-green-700 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-green-500/30 transition hover:-translate-y-0.5 hover:bg-green-600'
           >
-            Find Good Works
+            Make a Difference
           </Link>
         </div>
 
@@ -98,7 +92,7 @@ export function SiteHeader() {
               onClick={() => setIsOpen(false)}
               className='rounded-full bg-green-700 px-4 py-2 text-center font-semibold text-white'
             >
-              Find Good Works
+              Make a Difference
             </Link>
           </nav>
         </div>

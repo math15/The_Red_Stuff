@@ -1,334 +1,361 @@
-import {
-  BookOpenCheck,
-  BrainCircuit,
-  HandHeart,
-  Megaphone,
-  Newspaper,
-  Star,
-  Store,
-} from 'lucide-react';
+import { BookOpenCheck, BrainCircuit, Store } from 'lucide-react';
 import Link from 'next/link';
 
 import { loadCurrentEvents, loadQuotes } from '@/lib/data-sources';
 import {
-  getFeaturedOpportunities,
-  getQuotesForOpportunity,
-} from '@/lib/opportunity-service';
+  matchEventToQuotesForHome,
+  matchOpportunityToQuoteForHome,
+} from '@/lib/news-matcher';
+import { getFeaturedOpportunities } from '@/lib/opportunity-service';
 
 import { PageViewTracker } from '@/components/analytics/PageViewTracker';
-import { DualPillarHero } from '@/components/hero/DualPillarHero';
-import { OpportunityCard } from '@/components/opportunities/OpportunityCard';
-import { RecommendationsPanel } from '@/components/opportunities/RecommendationsPanel';
-import { QuoteCard } from '@/components/quotes/QuoteCard';
-import { ActionFlowCard } from '@/components/ui/ActionFlowCard';
-import { SectionHeader } from '@/components/ui/SectionHeader';
-import { StatCard } from '@/components/ui/StatCard';
 
 import { Quote } from '@/types';
 
 export default async function HomePage() {
   const currentEvents = await loadCurrentEvents();
-  const featuredEvent = currentEvents[0];
   const quotesData = await loadQuotes();
-  const featuredOpportunities = await getFeaturedOpportunities(4);
-  const actionOpportunity = featuredOpportunities[0];
+  const featuredOpportunities = await getFeaturedOpportunities(3);
 
-  const heroQuote: Quote =
-    quotesData.find(
-      (quote) => quote.id === featuredEvent?.related_quote_ids[0]
-    ) ?? quotesData[0];
-
-  const actionQuote = actionOpportunity
-    ? (await getQuotesForOpportunity(actionOpportunity))[0] ?? heroQuote
-    : heroQuote;
-
-  const featuredCards = await Promise.all(
-    featuredOpportunities.map(async (opportunity) => ({
-      opportunity,
-      quote: (await getQuotesForOpportunity(opportunity))[0],
-    }))
+  // Get today's word - quote matched to current event
+  // John 16:33 quotes - find or create fallback
+  const john1633Quotes = quotesData.filter((q) =>
+    q.reference.includes('John 16:33')
   );
+  const john1633Part1 =
+    john1633Quotes.find((q) => q.text.toLowerCase().includes('trouble')) ??
+    ({
+      text: 'In this world you will have trouble…',
+      reference: 'John 16:33',
+      id: 'john-16-33-1',
+      theme: 'hope' as const,
+      tags: ['trouble', 'world'],
+    } as Quote);
 
-  const hero = featuredEvent ? (
-    <DualPillarHero
-      title='The direct words of Jesus Christ, applied to today’s world, activated through your actions.'
-      subtitle='Each headline has a corresponding act of mercy. Each question can become a mission.'
-      heroQuote={heroQuote}
-      left={{
-        icon: <Newspaper className='h-5 w-5' />,
-        label: "Today's World",
-        headline: featuredEvent.headline,
-        summary: featuredEvent.summary,
-        scriptureLabel: 'Matched wisdom',
-        scriptureText: heroQuote.text,
-        reflection:
-          'Do not turn away—bring this ache before Christ and ask how to respond.',
-        ctaLabel: 'View current events',
-        ctaHref: `/good-works?event=${featuredEvent.id}`,
-        accent: 'news',
-      }}
-      right={{
-        icon: <HandHeart className='h-5 w-5' />,
-        label: 'Your Actions',
-        headline: actionOpportunity?.opportunity_title ?? 'Featured good work',
-        summary:
-          actionOpportunity?.highlight_reason ??
-          'Discover a verified opportunity that transforms lament into love.',
-        scriptureLabel: actionQuote.reference,
-        scriptureText: actionQuote.text,
-        reflection:
-          'Say yes within 5 minutes—courage grows when we act quickly.',
-        ctaLabel: 'Step into the work',
-        ctaHref: actionOpportunity
-          ? `/opportunities/${actionOpportunity.id}`
-          : '/good-works',
-        accent: 'action',
-      }}
-    />
-  ) : null;
-
-  const actionFlowSteps = [
-    {
-      id: 'news',
-      icon: <Newspaper className='h-5 w-5' />,
-      label: 'News',
-      title: featuredEvent?.headline ?? 'Listen to the city',
-      description:
-        featuredEvent?.summary ??
-        'We scan today’s headlines, trauma, and hope-filled breakthroughs.',
-      ctaLabel: 'See context',
-      ctaHref: `/good-works?event=${featuredEvent?.id ?? ''}`,
-    },
-    {
-      id: 'quote',
-      icon: <BookOpenCheck className='h-5 w-5' />,
-      label: 'Word of Wisdom',
-      title: heroQuote.reference,
-      description: heroQuote.text,
-      ctaLabel: 'Browse quotes',
-      ctaHref: '/quotations',
-    },
-    {
-      id: 'action',
-      icon: <HandHeart className='h-5 w-5' />,
-      label: 'Action',
-      title:
-        actionOpportunity?.opportunity_title ?? 'Take the next faithful step',
-      description:
-        actionOpportunity?.description ??
-        'Find a verified volunteer opportunity or micro-action to start within days.',
-      ctaLabel: 'Find good works',
-      ctaHref: actionOpportunity
-        ? `/opportunities/${actionOpportunity.id}`
-        : '/good-works',
-    },
-  ];
-
-  const secondaryFeatures = [
-    {
-      title: 'Ask a Question',
-      description:
-        'Bring your burden, fear, or confusion. Receive a scripture-grounded response.',
-      href: '/ask',
-      icon: <BrainCircuit className='h-5 w-5 text-red-600' />,
-    },
-    {
-      title: 'Browse Quotations',
-      description:
-        'Meditate on every word Jesus speaks. Filter by theme, crisis, or longing.',
-      href: '/quotations',
-      icon: <BookOpenCheck className='h-5 w-5 text-red-600' />,
-    },
-    {
-      title: 'Visit Store',
-      description:
-        'Wear reminders of mercy. Profits fuel emergency response grants.',
-      href: '/store',
-      icon: <Store className='h-5 w-5 text-red-600' />,
-    },
-    {
-      title: 'About The Red Stuff',
-      description:
-        'Meet the prayerful technologists, pastors, and neighbors building this ecosystem.',
-      href: '/about',
-      icon: <Megaphone className='h-5 w-5 text-red-600' />,
-    },
-  ];
+  const john1633Part2 =
+    john1633Quotes.find((q) => q.text.toLowerCase().includes('overcome')) ??
+    ({
+      text: 'But take heart! I have overcome the world',
+      reference: 'John 16:33',
+      id: 'john-16-33-2',
+      theme: 'hope' as const,
+      tags: ['overcome', 'hope'],
+    } as Quote);
 
   return (
     <div className='space-y-12 pb-16'>
       <PageViewTracker pageName='home' />
-      {hero}
-      <div className='mt-4 flex flex-wrap gap-3 text-sm font-semibold'>
-        <Link
-          href='/quotations'
-          className='inline-flex items-center rounded-full border border-red-200 bg-white px-4 py-2 text-red-600 transition hover:border-red-400 hover:text-red-700'
-        >
-          View more daily quotes →
-        </Link>
-        <Link
-          href='/good-works'
-          className='inline-flex items-center rounded-full border border-green-200 bg-green-50 px-4 py-2 text-green-700 transition hover:border-green-400 hover:text-green-800'
-        >
-          Find more opportunities →
-        </Link>
-      </div>
 
-      <div className='grid gap-4 md:grid-cols-3'>
-        <StatCard
-          label='Word to Action conversions'
-          value='48%'
-          helper='Users who click an action within 3 minutes of reading a quote.'
-          tone='red'
-        />
-        <StatCard
-          label='Verified opportunities live'
-          value='312'
-          helper='Across hunger, housing, youth, justice, and creation care.'
-          tone='green'
-        />
-        <StatCard
-          label='Urgent needs this week'
-          value='27'
-          helper='Meals, transitional housing, legal aid, and remote care.'
-          tone='amber'
-        />
-      </div>
-
-      <SectionHeader
-        kicker='Flow 01'
-        title='News → Wisdom → Action'
-        description='Every session elevates one relevant story, a piercing quote from Jesus, and a tangible next step.'
-      />
-      <ActionFlowCard steps={actionFlowSteps} />
-
-      <SectionHeader
-        kicker='Featured Good Works'
-        title='By Their Fruits: urgent & high-impact opportunities'
-        description='Curated weekly with partners like United Way, hospital chaplain networks, and grassroots ministries.'
-      />
-
-      <div className='grid gap-6 md:grid-cols-2'>
-        {featuredCards.map(({ opportunity, quote }) => (
-          <OpportunityCard
-            key={opportunity.id}
-            opportunity={opportunity}
-            quote={quote}
-          />
-        ))}
-      </div>
-
-      <div className='rounded-3xl border border-amber-200 bg-amber-50/70 p-6 text-sm text-neutral-700'>
-        <p className='text-xs font-semibold uppercase tracking-[0.35em] text-amber-700'>
-          Success snapshot
+      {/* Main hero title */}
+      <section className='mx-auto mt-4 w-[92%] max-w-6xl text-center'>
+        <h1 className='text-4xl font-semibold text-neutral-900 md:text-5xl'>
+          <span>The </span>
+          <span className='text-red-600'>Red</span>
+          <span> Stuff</span>
+        </h1>
+        <p className='mt-4 text-base text-neutral-700 md:text-lg'>
+          Connecting today&apos;s headlines with Christ&apos;s red letter
+          words—and turning wisdom into action
         </p>
-        <div className='mt-3 grid gap-4 md:grid-cols-3'>
-          {[
-            {
-              title: 'Meals cooked',
-              value: '1,420',
-              detail: 'Across Chicago & Oakland shelters',
-            },
-            {
-              title: 'Youth mentored this month',
-              value: '268',
-              detail: 'Through BrightSteps + Peace Circles',
-            },
-            {
-              title: 'Letters to incarcerated neighbors',
-              value: '780',
-              detail: 'Second Chance Correspondence',
-            },
-          ].map((item) => (
-            <div key={item.title}>
-              <p className='text-sm font-semibold text-neutral-800'>
-                {item.title}
-              </p>
-              <p className='text-2xl font-bold text-amber-700'>{item.value}</p>
-              <p className='text-xs text-neutral-600'>{item.detail}</p>
-            </div>
-          ))}
+      </section>
+
+      {/* Today's Good Works - inspiring stories of people who have made a difference */}
+      <section className='mt-10 bg-[#f5f5f4] py-10'>
+        <div className='mx-auto w-[92%] max-w-6xl px-4 md:px-8'>
+          <div className='text-center'>
+            <h2 className='text-2xl font-semibold text-neutral-900 md:text-3xl'>
+              Today&apos;s Good Works
+            </h2>
+            <p className='mt-2 text-sm text-neutral-600 md:text-base'>
+              Real stories of people making a difference in their communities.
+            </p>
+          </div>
+
+          <div className='mt-8 grid gap-6 md:grid-cols-3 md:items-stretch'>
+            {/* Placeholder success stories - to be replaced with actual stories */}
+            {[
+              {
+                title:
+                  'Local Teacher Starts Free After-School Tutoring Program',
+                description:
+                  'Sarah Martinez noticed struggling students in her neighborhood and started offering free tutoring in her garage. What began with 3 kids now serves 40 children weekly, helping them catch up and excel in school.',
+                quote:
+                  quotesData.find((q) => q.reference.includes('Matthew 25')) ??
+                  quotesData[0],
+              },
+              {
+                title: 'Community Garden Feeds 200 Families Monthly',
+                description:
+                  'When the local food bank faced shortages, retired nurse James Chen organized neighbors to transform an empty lot into a thriving community garden. Volunteers now harvest fresh produce that feeds over 200 families each month.',
+                quote:
+                  quotesData.find((q) => q.reference.includes('Matthew 5')) ??
+                  quotesData[1],
+              },
+              {
+                title: 'Teen Creates Care Packages for Homeless Neighbors',
+                description:
+                  'Sixteen-year-old Maya Patel started collecting hygiene items and warm clothing after seeing people in need near her school. Her initiative has now distributed over 500 care packages and inspired a city-wide youth movement.',
+                quote:
+                  quotesData.find((q) => q.reference.includes('Luke 10')) ??
+                  quotesData[2],
+              },
+            ].map((story, index) => (
+              <article
+                key={index}
+                className='flex flex-col rounded-3xl border border-neutral-200 bg-[#ffffff] p-6 shadow-md'
+              >
+                {/* Title section - fixed height */}
+                <div className='flex-shrink-0 min-h-[72px] flex items-start'>
+                  <h3 className='text-xl font-semibold text-neutral-900'>
+                    {story.title}
+                  </h3>
+                </div>
+
+                {/* Description section - fixed height */}
+                <div className='mt-3 flex-shrink-0 min-h-[96px]'>
+                  <p className='text-sm text-neutral-700'>
+                    {story.description}
+                  </p>
+                </div>
+
+                {/* Related Word section - fixed height */}
+                {story.quote && (
+                  <div className='mt-4 flex-shrink-0 min-h-[120px] border-t border-neutral-200 pt-4'>
+                    <p className='text-xs font-semibold uppercase tracking-[0.35em] text-neutral-500'>
+                      Related Word
+                    </p>
+                    <p className='mt-2 text-base font-medium text-red-600'>
+                      &quot;{story.quote.text.substring(0, 100)}
+                      {story.quote.text.length > 100 ? '...' : ''}&quot;
+                    </p>
+                    <p className='mt-1 text-xs font-medium text-neutral-500'>
+                      — {story.quote.reference}
+                    </p>
+                  </div>
+                )}
+
+                {/* Spacer to push button to bottom */}
+                <div className='mt-6 flex-1' />
+
+                {/* Button */}
+                <button
+                  disabled
+                  className='mt-4 inline-flex cursor-not-allowed items-center justify-center rounded-full border border-neutral-200 bg-white px-4 py-2 text-sm font-semibold text-neutral-400 transition'
+                >
+                  Learn More →
+                </button>
+              </article>
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
 
-      <SectionHeader
-        kicker='Daily Wisdom'
-        title='Matched Words of Jesus'
-        description='Meditate on today’s guiding Scriptures. Save them, share them, act on them.'
-      />
+      {/* Hear the Call / Heed the Call - side by side */}
+      <section className='mx-auto grid w-[92%] max-w-6xl gap-6 md:grid-cols-2 md:items-stretch'>
+        {/* Match quotes for both sections together to ensure no duplicates */}
+        {await (async () => {
+          // First, match quotes for "Hear the Call" section
+          const usedQuoteIds: string[] = [];
+          const hearTheCallResults = [];
 
-      <div className='grid gap-4 md:grid-cols-3'>
-        {quotesData.slice(0, 3).map((quote, index) => (
-          <QuoteCard key={quote.id} quote={quote} highlight={index === 0} />
-        ))}
-      </div>
+          for (const event of currentEvents.slice(0, 3)) {
+            const relatedQuote = await matchEventToQuotesForHome(
+              event,
+              quotesData,
+              usedQuoteIds
+            );
+            if (relatedQuote) {
+              usedQuoteIds.push(relatedQuote.id);
+            }
+            hearTheCallResults.push({ event, relatedQuote });
+          }
 
-      <SectionHeader
-        kicker='Personalized Path'
-        title='Recommendations based on your focus'
-        description='Adjust cause, skills, or city to see opportunities that align with your prayers and availability.'
-      />
-      <RecommendationsPanel />
+          // Then, match quotes for "Heed the Call" section using the same usedQuoteIds
+          const heedTheCallResults = [];
 
-      <SectionHeader
-        kicker='Choose your next step'
-        title='Secondary features'
-        description='Everything is designed to move hearts from overwhelm to faithful impact.'
-      />
-      <div className='grid gap-4 md:grid-cols-2'>
-        {secondaryFeatures.map((feature) => (
-          <Link
-            key={feature.title}
-            href={feature.href}
-            className='rounded-2xl border border-rose-200 bg-white/90 p-5 text-sm text-neutral-700 shadow-sm transition hover:-translate-y-1 hover:shadow-xl hover:shadow-rose-200/80'
-          >
-            <div className='flex items-center gap-3'>
-              <span className='inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50 text-red-600'>
-                {feature.icon}
-              </span>
-              <div>
-                <p className='text-base font-semibold text-neutral-900'>
-                  {feature.title}
+          for (const opportunity of featuredOpportunities.slice(0, 3)) {
+            const quote = await matchOpportunityToQuoteForHome(
+              opportunity,
+              quotesData,
+              usedQuoteIds
+            );
+            if (quote) {
+              usedQuoteIds.push(quote.id);
+            }
+            heedTheCallResults.push({ opportunity, quote });
+          }
+
+          return { hearTheCallResults, heedTheCallResults };
+        })().then(({ hearTheCallResults, heedTheCallResults }) => (
+          <>
+            {/* Hear the Call */}
+            <div className='flex flex-col rounded-2xl border border-neutral-200 bg-[#ffffff] p-8 shadow-sm'>
+              <div className='flex-shrink-0 min-h-[200px]'>
+                <h2 className='text-2xl font-semibold text-neutral-900'>
+                  Hear the Call
+                </h2>
+                <blockquote className='mt-4 border-l-4 border-red-600 pl-4'>
+                  <p className='text-base font-medium !text-red-600'>
+                    &quot;{john1633Part1.text}&quot;
+                  </p>
+                  <cite className='mt-1 block text-xs font-semibold uppercase tracking-[0.25em] text-neutral-500'>
+                    — {john1633Part1.reference}
+                  </cite>
+                </blockquote>
+                <p className='mt-4 text-sm text-neutral-700'>
+                  Every day brings new challenges. Today&apos;s events,
+                  illuminated by timeless wisdom to help you navigate them.
                 </p>
-                <p>{feature.description}</p>
+              </div>
+
+              {/* Simple list of 3 current events with matched quotes in red */}
+              <div className='mt-6 flex flex-1 flex-col gap-4 text-sm text-neutral-800'>
+                {hearTheCallResults.map(({ event, relatedQuote }) => (
+                  <div
+                    key={event.id}
+                    className='flex flex-1 flex-col rounded-xl border-l-4 border-red-500 bg-[#ffffff] p-4 shadow-sm'
+                  >
+                    <p className='font-semibold text-neutral-900'>
+                      {event.headline}
+                    </p>
+                    {relatedQuote && (
+                      <>
+                        <p className='mt-2 text-sm font-medium !text-red-600'>
+                          &quot;{relatedQuote.text}&quot;
+                        </p>
+                        <p className='mt-0.5 text-xs text-neutral-500'>
+                          — {relatedQuote.reference}
+                        </p>
+                      </>
+                    )}
+                    <div className='mt-auto pt-3'>
+                      <Link
+                        href={`/good-works?event=${event.id}`}
+                        className='inline-flex items-center rounded-full bg-neutral-700 px-3 py-1 text-xs font-semibold text-white transition hover:bg-neutral-800'
+                      >
+                        Learn More →
+                      </Link>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-          </Link>
-        ))}
-      </div>
 
-      <SectionHeader
-        kicker='Stories of Transformation'
-        title='“By their fruits you will know them.”'
-        description='Readers becoming restorers in their own neighborhoods.'
-      />
-      <div className='grid gap-4 md:grid-cols-2'>
-        {[
-          {
-            quote:
-              '“I read Matthew 25 in the app on my commute. By lunch I had joined a shelter team. 48 hours later we were serving chili to women who slept warm for the first time in weeks.”',
-            name: 'Lauren · Chicago',
-          },
-          {
-            quote:
-              '“News about rising evictions crushed me daily. The Red Stuff matched me to legal clinics two train stops away. Now I see faces instead of headlines.”',
-            name: 'Marcus · NYC',
-          },
-        ].map((story) => (
-          <article
-            key={story.name}
-            className='rounded-2xl border border-rose-200 bg-gradient-to-br from-white to-rose-50 p-5 text-neutral-700 shadow-sm'
-          >
-            <Star className='h-6 w-6 text-amber-500' />
-            <p className='mt-3 text-lg font-medium text-neutral-900'>
-              {story.quote}
-            </p>
-            <p className='mt-3 text-sm font-semibold uppercase tracking-[0.3em] text-neutral-500'>
-              {story.name}
-            </p>
-          </article>
+            {/* Heed the Call */}
+            <div className='flex flex-col rounded-2xl border border-neutral-200 bg-[#ffffff] p-8 shadow-sm'>
+              <div className='flex-shrink-0 min-h-[200px]'>
+                <h2 className='text-2xl font-semibold text-neutral-900'>
+                  Heed the Call
+                </h2>
+                <blockquote className='mt-4 border-l-4 border-red-600 pl-4'>
+                  <p className='text-base font-medium !text-red-600'>
+                    &quot;{john1633Part2.text}&quot;
+                  </p>
+                  <cite className='mt-1 block text-xs font-semibold uppercase tracking-[0.25em] text-neutral-500'>
+                    — {john1633Part2.reference}
+                  </cite>
+                </blockquote>
+                <p className='mt-4 text-sm text-neutral-700'>
+                  Take heart. The victory is already won. Now it&apos;s time to
+                  step into the work—to feed the hungry, comfort the broken, and
+                  be the hands and feet of Christ in your neighborhood.
+                </p>
+              </div>
+
+              <div className='mt-6 flex flex-1 flex-col gap-4 text-sm text-neutral-800'>
+                {heedTheCallResults.map(({ opportunity, quote }) => (
+                  <Link
+                    key={opportunity.id}
+                    href={`/opportunities/${opportunity.id}`}
+                    className='flex flex-1 flex-col rounded-xl border-l-4 border-red-500 bg-[#ffffff] p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md'
+                  >
+                    <p className='text-xs font-semibold uppercase tracking-[0.25em] text-neutral-500'>
+                      {opportunity.organization_name}
+                    </p>
+                    <h3 className='mt-1 text-base font-semibold text-neutral-900'>
+                      {opportunity.opportunity_title}
+                    </h3>
+                    <p className='mt-1 text-sm text-neutral-700'>
+                      {opportunity.description.substring(0, 140)}...
+                    </p>
+                    {quote && (
+                      <p className='mt-2 text-sm font-medium !text-red-600'>
+                        &quot;{quote.text.substring(0, 80)}...&quot;
+                      </p>
+                    )}
+                    <div className='mt-auto pt-3'>
+                      <div className='inline-flex items-center rounded-full bg-neutral-700 px-3 py-1 text-xs font-semibold text-white'>
+                        Take Action →
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </>
         ))}
-      </div>
+      </section>
+
+      {/* Explore More - Bottom Navigation style section */}
+      <section className='mt-10 bg-[#f5f5f4] py-10'>
+        <div className='mx-auto w-[92%] max-w-6xl p-8'>
+          <h2 className='mb-6 text-center text-2xl font-semibold text-neutral-900'>
+            Explore More
+          </h2>
+          <div className='grid gap-4 md:grid-cols-3'>
+            <Link
+              href='/ask'
+              className='flex flex-col items-center rounded-lg border border-neutral-200 bg-[#ffffff] p-6 text-center transition hover:border-red-200 hover:shadow-md'
+            >
+              <BrainCircuit className='mb-3 h-8 w-8 text-red-600' />
+              <h3 className='mb-2 text-lg font-semibold text-neutral-900'>
+                Ask a Question
+              </h3>
+              <p className='text-sm text-neutral-600'>
+                Share what&apos;s on your heart and receive wisdom through
+                relevant quotations.
+              </p>
+              <span className='mt-4 text-sm font-semibold text-red-600'>
+                Ask Now →
+              </span>
+            </Link>
+
+            <Link
+              href='/quotations'
+              className='flex flex-col items-center rounded-lg border border-neutral-200 bg-[#ffffff] p-6 text-center transition hover:border-red-200 hover:shadow-md'
+            >
+              <BookOpenCheck className='mb-3 h-8 w-8 text-red-600' />
+              <h3 className='mb-2 text-lg font-semibold text-neutral-900'>
+                Browse Quotations
+              </h3>
+              <p className='text-sm text-neutral-600'>
+                Explore a curated collection of Jesus&apos;s most powerful
+                teachings and sayings.
+              </p>
+              <span className='mt-4 text-sm font-semibold text-red-600'>
+                View All →
+              </span>
+            </Link>
+
+            <Link
+              href='/store'
+              className='flex flex-col items-center rounded-lg border border-neutral-200 bg-[#ffffff] p-6 text-center transition hover:border-red-200 hover:shadow-md'
+            >
+              <Store className='mb-3 h-8 w-8 text-red-600' />
+              <h3 className='mb-2 text-lg font-semibold text-neutral-900'>
+                Visit Our Store
+              </h3>
+              <p className='text-sm text-neutral-600'>
+                Publications, prints, and merchandise featuring these timeless
+                words.
+              </p>
+              <span className='mt-4 text-sm font-semibold text-red-600'>
+                Shop Now →
+              </span>
+            </Link>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

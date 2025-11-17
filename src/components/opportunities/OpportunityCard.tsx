@@ -6,7 +6,7 @@ import {
   Clock8,
   Flame,
   MapPin,
-  QuoteIcon,
+  MessageSquareQuote,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -43,8 +43,8 @@ export function OpportunityCard({
   };
 
   return (
-    <article className='flex h-full flex-col rounded-2xl border border-rose-200 bg-white/90 p-5 shadow-sm shadow-rose-100/70 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-rose-200/70'>
-      <div className='flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.35em] text-red-500'>
+    <article className='flex h-full flex-col rounded-2xl border border-rose-200 bg-[#ffffff] p-5 shadow-sm shadow-rose-100/70 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-rose-200/70'>
+      <div className='flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.35em] text-neutral-600'>
         <span className='inline-flex h-9 w-9 items-center justify-center rounded-full bg-red-50 text-red-600'>
           <Flame className='h-4 w-4' />
         </span>
@@ -88,7 +88,7 @@ export function OpportunityCard({
           {opportunity.cause_categories.map((category) => (
             <span
               key={category}
-              className='rounded-full bg-rose-50 px-3 py-1 text-rose-700'
+              className='rounded-full bg-neutral-100 px-3 py-1 text-neutral-600'
             >
               {category}
             </span>
@@ -97,15 +97,15 @@ export function OpportunityCard({
 
         {quote ? (
           <div className='mt-auto pt-4'>
-            <div className='flex min-h-[148px] flex-col rounded-xl border border-red-100 bg-red-50/70 p-4 text-sm text-neutral-700'>
-              <div className='flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-red-600'>
-                <QuoteIcon className='h-3.5 w-3.5 text-red-500' />
+            <div className='flex min-h-[148px] flex-col rounded-xl border border-red-100 bg-[#ffffff] p-4 text-sm text-neutral-700'>
+              <div className='flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-neutral-600'>
+                <MessageSquareQuote className='h-3.5 w-3.5 text-neutral-500' />
                 Related Word
               </div>
-              <p className='mt-2 flex-1 font-medium text-neutral-900'>
-                “{quote.text}”
+              <p className='mt-2 flex-1 font-medium !text-red-600'>
+                "{quote.text}"
               </p>
-              <p className='mt-1 text-xs font-semibold uppercase tracking-[0.35em] text-red-500'>
+              <p className='mt-1 text-xs font-semibold uppercase tracking-[0.35em] text-neutral-500'>
                 {quote.reference}
               </p>
             </div>

@@ -6,7 +6,7 @@ import { SectionHeader } from '@/components/ui/SectionHeader';
 
 export default function ConciergePage() {
   return (
-    <div className='space-y-10 pb-16'>
+    <div className='mx-auto w-[92%] max-w-6xl space-y-10 pb-16'>
       <PageViewTracker pageName='concierge' />
 
       <section className='rounded-3xl border border-rose-200 bg-gradient-to-br from-[#fff7ed] via-white to-[#f5efe7] p-8 shadow-lg shadow-rose-100/70'>
@@ -25,7 +25,7 @@ export default function ConciergePage() {
         />
 
         <div className='mt-6 grid gap-6 md:grid-cols-2'>
-          <div className='rounded-2xl border border-rose-100 bg-white/80 p-6'>
+          <div className='rounded-2xl border border-rose-100 bg-[#ffffff] p-6'>
             <p className='text-xs font-semibold uppercase tracking-[0.35em] text-red-600'>
               What to expect
             </p>
@@ -100,7 +100,7 @@ export default function ConciergePage() {
             <div className='space-y-3'>
               <a
                 href='mailto:concierge@theredstuff.org?subject=Booking a Matching Session'
-                className='flex items-center gap-3 rounded-xl border border-neutral-200 bg-white p-4 text-sm font-semibold text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-50'
+                className='flex items-center gap-3 rounded-xl border border-neutral-200 bg-[#ffffff] p-4 text-sm font-semibold text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-50'
               >
                 <Mail className='h-5 w-5 text-red-600' />
                 <div className='text-left'>
@@ -113,7 +113,7 @@ export default function ConciergePage() {
 
               <a
                 href='tel:+1-555-0123'
-                className='flex items-center gap-3 rounded-xl border border-neutral-200 bg-white p-4 text-sm font-semibold text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-50'
+                className='flex items-center gap-3 rounded-xl border border-neutral-200 bg-[#ffffff] p-4 text-sm font-semibold text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-50'
               >
                 <Phone className='h-5 w-5 text-red-600' />
                 <div className='text-left'>
@@ -126,7 +126,7 @@ export default function ConciergePage() {
 
               <a
                 href='sms:+1-555-0123?body=I%20would%20like%20to%20schedule%20a%20matching%20session'
-                className='flex items-center gap-3 rounded-xl border border-neutral-200 bg-white p-4 text-sm font-semibold text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-50'
+                className='flex items-center gap-3 rounded-xl border border-neutral-200 bg-[#ffffff] p-4 text-sm font-semibold text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-50'
               >
                 <MessageCircle className='h-5 w-5 text-red-600' />
                 <div className='text-left'>
@@ -137,7 +137,7 @@ export default function ConciergePage() {
                 </div>
               </a>
 
-              <div className='rounded-xl border border-neutral-200 bg-white p-4'>
+              <div className='rounded-xl border border-neutral-200 bg-[#ffffff] p-4'>
                 <div className='flex items-start gap-3'>
                   <Calendar className='h-5 w-5 text-red-600' />
                   <div className='text-sm'>

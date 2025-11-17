@@ -126,7 +126,7 @@ export default async function GoodWorksPage({
   );
 
   return (
-    <div className='mx-auto w-[92%] max-w-6xl space-y-10 pb-16'>
+    <div className='space-y-10 pb-20'>
       <PageViewTracker
         pageName='good_works'
         metadata={{ hasFilters: Object.keys(resolvedSearchParams).length > 0 }}
@@ -169,7 +169,7 @@ export default async function GoodWorksPage({
             </div>
           </div>
           <div className='rounded-2xl border border-rose-100 bg-[#ffffff] p-5 text-sm text-neutral-700 shadow-inner'>
-            <p className='text-xs font-semibold uppercase tracking-[0.35em] text-neutral-600'>
+            <p className='text-xs font-semibold uppercase tracking-[0.35em] text-red-600'>
               How it works
             </p>
             <ul className='mt-3 space-y-3'>

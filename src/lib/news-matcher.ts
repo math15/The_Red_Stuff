@@ -30,6 +30,23 @@ interface NewsMatchResponse {
 }
 
 /**
+ * Cleans OpenAI response by removing markdown code blocks
+ * OpenAI often wraps JSON responses in ```json ... ``` blocks
+ */
+function cleanJsonResponse(content: string): string {
+  // Remove markdown code blocks (```json ... ``` or ``` ... ```)
+  let cleaned = content.trim();
+
+  // Remove opening ```json or ```
+  cleaned = cleaned.replace(/^```(?:json)?\s*/i, '');
+
+  // Remove closing ```
+  cleaned = cleaned.replace(/\s*```$/i, '');
+
+  return cleaned.trim();
+}
+
+/**
  * Uses AI to intelligently match news events to relevant quotes and opportunities
  */
 export async function matchNewsEventsToQuotes(): Promise<NewsMatchResponse> {
@@ -103,6 +120,108 @@ async function matchSingleEvent(
 
 /**
  * Use OpenAI to match an event to relevant quotes
+ * Exported for use in home page to get diverse quotes per event
+ * @param excludedQuoteIds - Array of quote IDs that have already been used, to ensure variety
+ */
+export async function matchEventToQuotesForHome(
+  event: CurrentEvent,
+  quotes: Quote[],
+  excludedQuoteIds: string[] = []
+): Promise<Quote | null> {
+  try {
+    const openai = getOpenAIClient();
+    // Filter out already used quotes
+    const availableQuotes = quotes.filter(
+      (q) => !excludedQuoteIds.includes(q.id)
+    );
+
+    // If all quotes are excluded, use all quotes (fallback)
+    const quotesToUse = availableQuotes.length > 0 ? availableQuotes : quotes;
+
+    const prompt = `You are a biblical wisdom matcher. Given a current event, find the most relevant quote from Jesus's teachings.
+
+Current Event:
+Headline: ${event.headline}
+Summary: ${event.summary}
+Category: ${event.category}
+
+Available Quotes:
+${quotesToUse
+  .map(
+    (q, i) =>
+      `${i + 1}. "${q.text}" (${q.reference}) - Theme: ${
+        q.theme
+      }, Tags: ${q.tags.join(', ')}`
+  )
+  .join('\n')}
+
+${
+  excludedQuoteIds.length > 0
+    ? `\nIMPORTANT: The following quotes have already been used for other news stories and should NOT be selected: ${excludedQuoteIds
+        .map((id) => quotes.find((q) => q.id === id)?.reference)
+        .filter(Boolean)
+        .join(', ')}`
+    : ''
+}
+
+Task: Select the SINGLE most relevant quote that directly addresses this situation. IMPORTANT: Choose a unique quote that has not been used for other recent news stories. Each news story should have a distinct quote that specifically relates to that story's theme.
+
+Respond ONLY with a JSON object like this:
+{
+  "quoteNumber": 1,
+  "relevanceScore": 95,
+  "reasoning": "This quote directly addresses the need for compassion toward those experiencing homelessness."
+}`;
+
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: 'system',
+          content:
+            'You are an expert at matching current events with relevant biblical wisdom from Jesus. You understand context, themes, and practical application. Always select diverse, unique quotes for different events.',
+        },
+        {
+          role: 'user',
+          content: prompt,
+        },
+      ],
+      temperature: 0.7,
+      max_tokens: 200,
+    });
+
+    const content = response.choices[0]?.message?.content;
+    if (!content) {
+      throw new Error('No response from OpenAI');
+    }
+
+    const cleaned = cleanJsonResponse(content);
+    const parsed = JSON.parse(cleaned) as {
+      quoteNumber: number;
+      relevanceScore: number;
+      reasoning: string;
+    };
+
+    const quote = quotesToUse[parsed.quoteNumber - 1];
+    return quote ?? null;
+  } catch (error) {
+    logger(error, 'home-event-quote-matching');
+    // Fallback to existing related_quote_ids if AI fails
+    if (event.related_quote_ids.length > 0) {
+      const fallbackQuote = quotes.find(
+        (q) => q.id === event.related_quote_ids[0]
+      );
+      if (fallbackQuote && !excludedQuoteIds.includes(fallbackQuote.id)) {
+        return fallbackQuote;
+      }
+    }
+    // Last resort: find any quote not in excluded list
+    return quotes.find((q) => !excludedQuoteIds.includes(q.id)) ?? null;
+  }
+}
+
+/**
+ * Use OpenAI to match an event to relevant quotes
  */
 async function matchEventToQuotes(
   event: CurrentEvent,
@@ -126,7 +245,9 @@ ${quotes
   )
   .join('\n')}
 
-Task: Select the top 3 most relevant quotes that directly address this situation. For each quote, provide:
+Task: Select the top 3 most relevant quotes that directly address this situation. IMPORTANT: Use diverse, relevant quotes. Never repeat the same quote for multiple consecutive items. Each news story should have a unique quote that specifically relates to that story's theme.
+
+For each quote, provide:
 1. The quote number (1-${quotes.length})
 2. A relevance score (0-100)
 3. A brief explanation of why it's relevant
@@ -384,6 +505,124 @@ function generateSummary(matches: MatchResult[]): string {
 }
 
 /**
+ * Match an opportunity to a unique quote, ensuring variety across multiple opportunities
+ * @param opportunity - The opportunity to match
+ * @param quotes - All available quotes
+ * @param excludedQuoteIds - Quote IDs already used for other opportunities in the same section
+ */
+export async function matchOpportunityToQuoteForHome(
+  opportunity: Opportunity,
+  quotes: Quote[],
+  excludedQuoteIds: string[] = []
+): Promise<Quote | null> {
+  try {
+    const openai = getOpenAIClient();
+    // Filter out already used quotes
+    const availableQuotes = quotes.filter(
+      (q) => !excludedQuoteIds.includes(q.id)
+    );
+
+    // If all quotes are excluded, use all quotes (fallback)
+    const quotesToUse = availableQuotes.length > 0 ? availableQuotes : quotes;
+
+    // First try to use pre-configured quotes if available and not excluded
+    if (opportunity.related_quotes.length > 0) {
+      const preconfiguredQuote = quotes.find(
+        (q) =>
+          opportunity.related_quotes.includes(q.id) &&
+          !excludedQuoteIds.includes(q.id)
+      );
+      if (preconfiguredQuote) {
+        return preconfiguredQuote;
+      }
+    }
+
+    const prompt = `You are matching a volunteer opportunity with a relevant quote from Jesus's teachings.
+
+Opportunity:
+Title: ${opportunity.opportunity_title}
+Organization: ${opportunity.organization_name}
+Description: ${opportunity.description.substring(0, 200)}
+Categories: ${opportunity.cause_categories.join(', ')}
+
+Available Quotes:
+${quotesToUse
+  .map(
+    (q, i) =>
+      `${i + 1}. "${q.text}" (${q.reference}) - Theme: ${
+        q.theme
+      }, Tags: ${q.tags.join(', ')}`
+  )
+  .join('\n')}
+
+${
+  excludedQuoteIds.length > 0
+    ? `\nIMPORTANT: The following quotes have already been used for other opportunities in this section and should NOT be selected: ${excludedQuoteIds
+        .map((id) => quotes.find((q) => q.id === id)?.reference)
+        .filter(Boolean)
+        .join(', ')}`
+    : ''
+}
+
+Task: Select the SINGLE most relevant quote that connects to this opportunity. IMPORTANT: Each opportunity card must have a unique quote. Never repeat quotes within the same section. Choose a distinct quote that specifically relates to this opportunity's mission and impact.
+
+Respond ONLY with a JSON object like this:
+{
+  "quoteNumber": 1,
+  "relevanceScore": 95,
+  "reasoning": "This quote directly connects to serving the vulnerable through this opportunity."
+}`;
+
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: 'system',
+          content:
+            "You are an expert at matching volunteer opportunities with relevant biblical wisdom from Jesus. You understand how to connect service opportunities with Christ's teachings. Always select diverse, unique quotes for different opportunities.",
+        },
+        {
+          role: 'user',
+          content: prompt,
+        },
+      ],
+      temperature: 0.7,
+      max_tokens: 200,
+    });
+
+    const content = response.choices[0]?.message?.content;
+    if (!content) {
+      throw new Error('No response from OpenAI');
+    }
+
+    const cleaned = cleanJsonResponse(content);
+    const parsed = JSON.parse(cleaned) as {
+      quoteNumber: number;
+      relevanceScore: number;
+      reasoning: string;
+    };
+
+    const quote = quotesToUse[parsed.quoteNumber - 1];
+    return quote ?? null;
+  } catch (error) {
+    logger(error, 'home-opportunity-quote-matching');
+    // Fallback to existing related_quotes if AI fails
+    if (opportunity.related_quotes.length > 0) {
+      const fallbackQuote = quotes.find(
+        (q) =>
+          opportunity.related_quotes.includes(q.id) &&
+          !excludedQuoteIds.includes(q.id)
+      );
+      if (fallbackQuote) {
+        return fallbackQuote;
+      }
+    }
+    // Last resort: find any quote not in excluded list
+    return quotes.find((q) => !excludedQuoteIds.includes(q.id)) ?? null;
+  }
+}
+
+/**
  * Match a user question to relevant quotes and opportunities
  */
 export async function matchQuestionToAction(question: string): Promise<{
@@ -438,12 +677,24 @@ Select the top 3 quotes that best address this question. Respond with JSON:
     });
 
     const quoteContent = quoteResponse.choices[0]?.message?.content;
-    const quoteParsed = quoteContent
-      ? (JSON.parse(quoteContent) as Array<{
+    let quoteParsed: Array<{
+      quoteNumber: number;
+      relevance: string;
+    }> = [];
+
+    if (quoteContent) {
+      try {
+        const cleaned = cleanJsonResponse(quoteContent);
+        quoteParsed = JSON.parse(cleaned) as Array<{
           quoteNumber: number;
           relevance: string;
-        }>)
-      : [];
+        }>;
+      } catch (error) {
+        logger({ error, content: quoteContent }, 'parse-quote-response-error');
+        // Fallback: return empty array if parsing fails
+        quoteParsed = [];
+      }
+    }
 
     const matchedQuotes = quoteParsed
       .map((m) => {
@@ -507,12 +758,27 @@ Suggest 2-3 opportunities where they could turn this wisdom into action. Respond
     });
 
     const oppContent = oppResponse.choices[0]?.message?.content;
-    const oppParsed = oppContent
-      ? (JSON.parse(oppContent) as Array<{
+    let oppParsed: Array<{
+      opportunityNumber: number;
+      reasoning: string;
+    }> = [];
+
+    if (oppContent) {
+      try {
+        const cleaned = cleanJsonResponse(oppContent);
+        oppParsed = JSON.parse(cleaned) as Array<{
           opportunityNumber: number;
           reasoning: string;
-        }>)
-      : [];
+        }>;
+      } catch (error) {
+        logger(
+          { error, content: oppContent },
+          'parse-opportunity-response-error'
+        );
+        // Fallback: return empty array if parsing fails
+        oppParsed = [];
+      }
+    }
 
     const matchedOpportunities = oppParsed
       .map((m) => {
@@ -532,7 +798,12 @@ ${matchedOpportunities
   .map((m) => `- ${m.opportunity.opportunity_title}`)
   .join('\n')}
 
-Write a brief (2-3 sentences) reflection connecting their question to these teachings and actions.`;
+Write a brief (2-3 sentences) reflection connecting their question to these teachings and actions.
+
+Important requirements for your reflection:
+- Include at least ONE direct quote from Jesus, written exactly in quotation marks, for example: "Blessed are the peacemakers..."
+- Make sure that quoted sentence comes from one of the teachings listed above.
+- Keep the tone pastoral and hopeful, and keep the total length under 120 words.`;
 
     const reflectionResponse = await openai.chat.completions.create({
       model: 'gpt-4o-mini',

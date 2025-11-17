@@ -14,7 +14,7 @@ export function SectionHeader({
   return (
     <div className={align === 'center' ? 'text-center' : 'text-left'}>
       {kicker ? (
-        <p className='text-xs font-semibold uppercase tracking-[0.35em] text-red-600'>
+        <p className='text-xs font-semibold uppercase tracking-[0.35em] text-neutral-600'>
           {kicker}
         </p>
       ) : null}

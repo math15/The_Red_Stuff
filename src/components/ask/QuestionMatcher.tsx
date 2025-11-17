@@ -10,6 +10,21 @@ export function QuestionMatcher() {
   const [question, setQuestion] = useState('');
   const { loading, error, data, matchQuestion } = useQuestionMatch();
 
+  // Render AI reflection but highlight any quoted phrases in red
+  const renderReflection = (text: string) => {
+    const parts = text.split(/(".*?")/g);
+    return parts.map((part, index) => {
+      if (part.startsWith('"') && part.endsWith('"')) {
+        return (
+          <span key={index} className='font-semibold text-red-600'>
+            {part}
+          </span>
+        );
+      }
+      return <span key={index}>{part}</span>;
+    });
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!question.trim()) return;
@@ -72,7 +87,7 @@ export function QuestionMatcher() {
                   Reflection
                 </p>
                 <p className='mt-2 text-base text-neutral-800'>
-                  {data.reflection}
+                  {renderReflection(data.reflection)}
                 </p>
               </div>
             </div>
@@ -90,10 +105,10 @@ export function QuestionMatcher() {
                     key={quote.id}
                     className='rounded-3xl border border-rose-200 bg-gradient-to-br from-white to-rose-50/50 p-6'
                   >
-                    <p className='text-xs font-semibold uppercase tracking-[0.3em] text-red-600'>
+                    <p className='text-xs font-semibold uppercase tracking-[0.3em] text-neutral-500'>
                       {quote.reference}
                     </p>
-                    <blockquote className='mt-3 text-lg font-semibold text-neutral-900'>
+                    <blockquote className='mt-3 text-lg font-semibold text-red-600'>
                       "{quote.text}"
                     </blockquote>
                     {quote.context && (

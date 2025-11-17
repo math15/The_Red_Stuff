@@ -47,14 +47,14 @@ export function DualPillarHero({
             {subtitle}
           </p>
         </div>
-        <div className='max-w-sm rounded-2xl border border-red-200 bg-white/80 p-5 text-sm text-neutral-700 shadow-inner'>
-          <p className='text-xs font-semibold uppercase tracking-[0.3em] text-red-600'>
+        <div className='max-w-sm rounded-2xl border border-red-200 bg-[#ffffff] p-5 text-sm text-neutral-700 shadow-inner'>
+          <p className='text-xs font-semibold uppercase tracking-[0.3em] text-neutral-500'>
             Featured Word
           </p>
-          <p className='mt-3 text-lg font-semibold text-neutral-900'>
-            “{heroQuote.text}”
+          <p className='mt-3 text-lg font-semibold text-red-600'>
+            "{heroQuote.text}"
           </p>
-          <p className='mt-2 text-xs font-semibold uppercase tracking-[0.25em] text-red-700'>
+          <p className='mt-2 text-xs font-semibold uppercase tracking-[0.25em] text-neutral-500'>
             {heroQuote.reference}
           </p>
           <p className='mt-3 text-neutral-600'>
@@ -90,11 +90,11 @@ export function DualPillarHero({
               {pillar.headline}
             </h3>
             <p className='mt-2 text-sm text-neutral-700'>{pillar.summary}</p>
-            <div className='mt-4 flex-grow rounded-xl bg-white/70 p-4 text-sm text-neutral-700'>
-              <p className='text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-red-500'>
+            <div className='mt-4 flex-grow rounded-xl bg-[#ffffff] p-4 text-sm text-neutral-700'>
+              <p className='text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-neutral-500'>
                 {pillar.scriptureLabel}
               </p>
-              <p className='mt-2 font-medium text-neutral-900'>
+              <p className='mt-2 font-medium !text-red-600'>
                 {pillar.scriptureText}
               </p>
               <p className='mt-2 text-neutral-600'>{pillar.reflection}</p>
