@@ -157,14 +157,22 @@ ${quotesToUse
 
 ${
   excludedQuoteIds.length > 0
-    ? `\nIMPORTANT: The following quotes have already been used for other news stories and should NOT be selected: ${excludedQuoteIds
+    ? `\nCRITICAL REQUIREMENT - QUOTE VARIETY: The following quotes have already been used for other news stories in this section and MUST NOT be selected: ${excludedQuoteIds
         .map((id) => quotes.find((q) => q.id === id)?.reference)
         .filter(Boolean)
-        .join(', ')}`
+        .join(
+          ', '
+        )}. You MUST choose a different, unique quote from the available list above.`
     : ''
 }
 
-Task: Select the SINGLE most relevant quote that directly addresses this situation. IMPORTANT: Choose a unique quote that has not been used for other recent news stories. Each news story should have a distinct quote that specifically relates to that story's theme.
+Task: Select the SINGLE most relevant quote that directly addresses this situation. 
+
+STRICT REQUIREMENTS:
+1. The quote must be contextually relevant to this specific event
+2. The quote MUST be unique - it cannot be the same as any quote already used for other events in this section
+3. Each news story must have a distinct, unique quote that specifically relates to that story's theme
+4. If a quote has already been used (listed above), you MUST select a different one, even if it seems slightly less relevant
 
 Respond ONLY with a JSON object like this:
 {
@@ -179,7 +187,7 @@ Respond ONLY with a JSON object like this:
         {
           role: 'system',
           content:
-            'You are an expert at matching current events with relevant biblical wisdom from Jesus. You understand context, themes, and practical application. Always select diverse, unique quotes for different events.',
+            'You are an expert at matching current events with relevant biblical wisdom from Jesus. You understand context, themes, and practical application. CRITICAL: You must always select diverse, unique quotes for different events. Never repeat the same quote for multiple events in the same section. Each event must have a distinct quote that is contextually relevant and unique.',
         },
         {
           role: 'user',
@@ -557,14 +565,22 @@ ${quotesToUse
 
 ${
   excludedQuoteIds.length > 0
-    ? `\nIMPORTANT: The following quotes have already been used for other opportunities in this section and should NOT be selected: ${excludedQuoteIds
+    ? `\nCRITICAL REQUIREMENT - QUOTE VARIETY: The following quotes have already been used for other opportunities in this "Heed the Call" section and MUST NOT be selected: ${excludedQuoteIds
         .map((id) => quotes.find((q) => q.id === id)?.reference)
         .filter(Boolean)
-        .join(', ')}`
+        .join(
+          ', '
+        )}. You MUST choose a different, unique quote from the available list above.`
     : ''
 }
 
-Task: Select the SINGLE most relevant quote that connects to this opportunity. IMPORTANT: Each opportunity card must have a unique quote. Never repeat quotes within the same section. Choose a distinct quote that specifically relates to this opportunity's mission and impact.
+Task: Select the SINGLE most relevant quote that connects to this opportunity.
+
+STRICT REQUIREMENTS:
+1. The quote must be contextually relevant to this specific opportunity's mission
+2. The quote MUST be unique - it cannot be the same as any quote already used for other opportunities in this section
+3. Each opportunity card must have a distinct, unique quote that specifically relates to that opportunity's impact
+4. If a quote has already been used (listed above), you MUST select a different one, even if it seems slightly less relevant
 
 Respond ONLY with a JSON object like this:
 {
@@ -579,7 +595,7 @@ Respond ONLY with a JSON object like this:
         {
           role: 'system',
           content:
-            "You are an expert at matching volunteer opportunities with relevant biblical wisdom from Jesus. You understand how to connect service opportunities with Christ's teachings. Always select diverse, unique quotes for different opportunities.",
+            "You are an expert at matching volunteer opportunities with relevant biblical wisdom from Jesus. You understand how to connect service opportunities with Christ's teachings. CRITICAL: You must always select diverse, unique quotes for different opportunities. Never repeat the same quote for multiple opportunities in the same section. Each opportunity must have a distinct quote that is contextually relevant and unique.",
         },
         {
           role: 'user',

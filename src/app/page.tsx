@@ -59,7 +59,7 @@ export default async function HomePage() {
         </p>
       </section>
 
-      {/* Today's Good Works - inspiring stories of people who have made a difference */}
+      {/* Today's Good Works - inspiring past stories of people who have made a difference */}
       <section className='mt-10 bg-[#f5f5f4] py-10'>
         <div className='mx-auto w-[92%] max-w-6xl px-4 md:px-8'>
           <div className='text-center'>
@@ -67,7 +67,9 @@ export default async function HomePage() {
               Today&apos;s Good Works
             </h2>
             <p className='mt-2 text-sm text-neutral-600 md:text-base'>
-              Real stories of people making a difference in their communities.
+              Inspiring stories of people who have made a difference in their
+              communities. These are real examples of past impact that show how
+              faith becomes action.
             </p>
           </div>
 
@@ -137,13 +139,13 @@ export default async function HomePage() {
                 {/* Spacer to push button to bottom */}
                 <div className='mt-6 flex-1' />
 
-                {/* Button */}
-                <button
-                  disabled
-                  className='mt-4 inline-flex cursor-not-allowed items-center justify-center rounded-full border border-neutral-200 bg-white px-4 py-2 text-sm font-semibold text-neutral-400 transition'
+                {/* Button - links to full story (placeholder for now) */}
+                <Link
+                  href={`/stories/${index + 1}`}
+                  className='mt-4 inline-flex items-center justify-center rounded-full border border-neutral-300 bg-white px-4 py-2 text-sm font-semibold text-neutral-700 transition hover:border-red-300 hover:bg-red-50 hover:text-red-700'
                 >
                   Learn More →
-                </button>
+                </Link>
               </article>
             ))}
           </div>
